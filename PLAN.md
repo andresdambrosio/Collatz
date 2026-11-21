@@ -46,7 +46,9 @@ aunque la prueba completa no llegue.
 ### Fase 4 — Frente reescritura / certificados (ataque principal)
 - [x] Sistema `𝒯` de Yolcu–Aaronson–Heule (arXiv 2105.14697, 11 reglas, binario/ternario) en Lean:
       `collatz_iff_terminates : Collatz ↔ SRS.Terminates` (`Collatz/Rewriting.lean`), sobre palabras
-      canónicas `▷w◁` (el Lema 3.16 del paper, que pasa de todas las palabras a las canónicas, no está formalizado).
+      canónicas `▷w◁`; y `collatz_iff_terminatesAll` sobre **todas** las palabras del alfabeto de 7 letras
+      (Lema 3.16, `Collatz/Rewriting/AllWords.lean`, con una prueba directa por cortes en los marcadores
+      y medidas lexicográficas, sin la *type introduction* del paper).
       Validación numérica previa: `scripts/srs.py`.
 - [x] Verificador en Lean: eliminación de reglas por medida + interpretaciones naturales
       (`Rewriting/Natural.lean`) y árticas (`Rewriting/Arctic.lean`), chequeo con `decide +kernel`

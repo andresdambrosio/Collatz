@@ -7,6 +7,8 @@ import Collatz
 #print axioms noDivergentOrbits_iff_forge
 #print axioms cycle_period_ge
 #print axioms collatz_iff_terminates
+#print axioms SRS.terminatesAll_iff
+#print axioms collatz_iff_terminatesAll
 #print axioms SRS.termIn_noStart
 #print axioms SRS.termIn_without
 #print axioms SRS.Farkas.termF_all

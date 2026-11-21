@@ -18,7 +18,8 @@ Las auxiliares y las de inicio no cambian el valor; las dinámicas aplican `Coll
 Representamos sólo la palabra interna `w` (los marcadores quedan implícitos), así que
 `Terminates` es terminación sobre las palabras canónicas `▷ w ◁`. El paper prueba
 (Teorema 3.17) la versión sobre **todas** las palabras; el Lema 3.16 reduce a la forma
-canónica. Esa reducción no está formalizada acá.
+canónica. Esa reducción está en `Collatz/Rewriting/AllWords.lean`
+(`collatz_iff_terminatesAll`).
 
 **Resultado:** `collatz_iff_terminates : Collatz ↔ SRS.Terminates`. Es una reformulación de la
 conjetura, no un avance hacia ella. Su valor es que fija en Lean el objeto sobre el que se pueden
