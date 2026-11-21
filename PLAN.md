@@ -63,6 +63,9 @@ aunque la prueba completa no llegue.
       `farkas_convergent` (Teorema 4.2 de YAH). Se corrigió un hueco del argumento de §4.2 (`Shape` + chequeo finito).
 - [ ] (descartado por ahora) clases mod 4/mod 8 de §4.5: Nashida ya tiene resultados más fuertes en Lean
 - [ ] Si se vuelve a `SN({ρ}/𝒯)`: sólo con técnicas fuera de la barrera de Nashida
+- [x] Vecinos `t◁ → e◁` (`e = 1`: 3x−1, `e = 0`: 3x−3) como filtro de técnicas: en ellos ninguna regla se
+      puede eliminar (`SRS.Neighbor.not_relSN_d1/d0`, `Collatz/Rewriting/Neighbors.lean`). Descarta las
+      interpretaciones afines de dimensión 1 sobre ℝ≥0 (z3). Ver `Ideas/vecinos_de_T.md`
 - [ ] Verificar en Lean los certificados de terminación que encuentre la búsqueda
 - [ ] Empujar la frontera: variantes más fuertes que las ya demostradas
 

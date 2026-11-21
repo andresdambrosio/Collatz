@@ -9,6 +9,9 @@ import Collatz
 #print axioms collatz_iff_terminates
 #print axioms SRS.terminatesAll_iff
 #print axioms collatz_iff_terminatesAll
+#print axioms SRS.Neighbor.nstep_d2_iff
+#print axioms SRS.Neighbor.not_relSN_d1
+#print axioms SRS.Neighbor.not_relSN_d0
 #print axioms SRS.termIn_noStart
 #print axioms SRS.termIn_without
 #print axioms SRS.Farkas.termF_all
