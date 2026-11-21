@@ -14,6 +14,12 @@ Proyecto Lake (Lean `v4.33.1` + Mathlib) para formalizar la conjetura de Collatz
 - `Collatz/Bridge.lean`: equivalencias entre las dos convenciones y `cycle_period_ge` (período ≥ 2301).
   Ojo: el `T` de la raíz es el mapa clásico; `Collatz.T` es el acelerado.
 - `Collatz/Rewriting.lean`: sistema de reescritura de Yolcu–Aaronson–Heule (namespace `SRS`) y `collatz_iff_terminates`.
+- `Collatz/Rewriting/`: `Natural.lean`/`Arctic.lean` (verificador de interpretaciones matriciales),
+  `SubsystemsNat.lean`/`SubsystemsArc.lean` (**generados** por `scripts/certs.py --gen <dir-proofs>`; no editar a mano),
+  `Subsystems.lean` (`termIn_without`: los 11 subsistemas terminan),
+  `FarkasCert.lean` (**generado**) y `Farkas.lean` (`farkas_convergent`).
+- `docs/prior_art_rewriting.md`: prior art de la Fase 4 (Nashida 2026: barreras en Lean).
+- `scripts/certs.py`: parser/chequeo de certificados de YAH; `scripts/srs.py`, `scripts/farkas_check.py`: chequeos numéricos.
 - `Collatz/Main.lean`: los dos objetivos abiertos (`sorry`) y `collatz_conjecture`.
 - `PLAN.md`: plan de trabajo por fases; mantenerlo actualizado. `Ideas/`: una idea por archivo (ver `_PLANTILLA.md`).
 - `scripts/verify.py`: verificación numérica del descenso (`python3 scripts/verify.py 10000000`).

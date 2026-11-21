@@ -7,6 +7,10 @@ import Collatz
 #print axioms noDivergentOrbits_iff_forge
 #print axioms cycle_period_ge
 #print axioms collatz_iff_terminates
+#print axioms SRS.termIn_noStart
+#print axioms SRS.termIn_without
+#print axioms SRS.Farkas.termF_all
+#print axioms farkas_convergent
 #print axioms collatz_conjecture
 -- Librería Forge
 #print axioms Collatz.collatz_of_noCycles_noDivergence

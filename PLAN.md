@@ -48,9 +48,19 @@ aunque la prueba completa no llegue.
       `collatz_iff_terminates : Collatz ↔ SRS.Terminates` (`Collatz/Rewriting.lean`), sobre palabras
       canónicas `▷w◁` (el Lema 3.16 del paper, que pasa de todas las palabras a las canónicas, no está formalizado).
       Validación numérica previa: `scripts/srs.py`.
-- [ ] Verificador de interpretaciones matriciales (naturales y árticas) en Lean, con chequeo por `decide`
-- [ ] Verificar los certificados del paper para los 11 subsistemas `𝒯 ∖ {regla}`
-      (código: github.com/emreyolcu/rewriting-collatz, a confirmar)
+- [x] Verificador en Lean: eliminación de reglas por medida + interpretaciones naturales
+      (`Rewriting/Natural.lean`) y árticas (`Rewriting/Arctic.lean`), chequeo con `decide +kernel`
+- [x] Los 11 subsistemas `𝒯 ∖ {ρ}` terminan (`SRS.termIn_without`, `Rewriting/Subsystems.lean`),
+      con los certificados de github.com/emreyolcu/rewriting-collatz (`proofs/collatz-T-NN.log`),
+      parseados y re-chequeados por `scripts/certs.py --gen <dir-proofs>`. Sobre palabras canónicas.
+- [x] Prior art (`docs/prior_art_rewriting.md`): no encontré verificación formal de estos certificados.
+      **Nashida (2026, Lean)** prueba que las matrices naturales/árticas *solas* no eliminan ninguna regla de
+      `𝒯` en ninguna dimensión: el "paso real" por esa vía está bloqueado. También tiene en Lean versiones
+      más fuertes de las clases mod 8 de YAH.
+- [x] Farkas: `ℱ` termina (`SRS.Farkas.termF_all`, certificado ártico 5×5 sobre `ℱ^rev`) y de ahí
+      `farkas_convergent` (Teorema 4.2 de YAH). Se corrigió un hueco del argumento de §4.2 (`Shape` + chequeo finito).
+- [ ] (descartado por ahora) clases mod 4/mod 8 de §4.5: Nashida ya tiene resultados más fuertes en Lean
+- [ ] Si se vuelve a `SN({ρ}/𝒯)`: sólo con técnicas fuera de la barrera de Nashida
 - [ ] Verificar en Lean los certificados de terminación que encuentre la búsqueda
 - [ ] Empujar la frontera: variantes más fuertes que las ya demostradas
 
