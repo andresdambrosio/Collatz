@@ -69,6 +69,24 @@ aunque la prueba completa no llegue.
 - [ ] Verificar en Lean los certificados de terminación que encuentre la búsqueda
 - [ ] Empujar la frontera: variantes más fuertes que las ya demostradas
 
+- [x] Matrices racionales (fuera de Nashida): sin certificados en `d = 2` con entradas `k/D` chicas
+      (`scripts/rational_search.py`). **Frente en pausa desde 2026-11-21.**
+
+### Fase 3b — Ciclos: subir la cota incondicional verificada (frente activo desde 2026-11-21)
+Para la cota sólo hace falta que ningún elemento de un ciclo sea `< M`: alcanza con que todo impar `n < M`
+**baje por debajo de sí mismo** (más barato que llegar a 1). Con criba mod `2^20` sólo queda el ~2,6 % de los enteros.
+Cota según `M` (mínimo `k` con `0 < A − k·log₂3 ≤ k·log₂(1 + 1/(3M))`; coincide con Forge en 6·10⁵ y 2⁷¹):
+
+| M | 6·10⁵ (hoy) | 10⁸ | 10⁹ | 10¹⁰ | 2⁴⁰ |
+|---|---|---|---|---|---|
+| k ≥ | 2 301 | 15 601 | 47 468 | 190 537 | 10 781 274 |
+
+- [ ] Lema en Lean: si todo impar `n < M` desciende, no hay elemento de ciclo `< M` (el mínimo de un ciclo no desciende)
+- [ ] Criba de Terras verificada: las clases mod `2^j` que descienden en ≤ `j` pasos, para todo `q`
+- [ ] Chequeo de los sobrevivientes `< M` (kernel hasta ~10⁸–10⁹; con `native_decide` hasta ~10¹⁰)
+- [ ] Nueva cota con el sándwich + `cf_unimodular_gap`
+Es una mejora del resultado *formal*; la literatura (con verificación a 2⁷¹, no formal) tiene ≥ 1,1·10¹¹.
+
 ### Fase 5 — Frente divergencia (`no_divergent_orbits`)
 - [x] Retrato de un contraejemplo (Forge): → ∞, densidad de impares ≤ log₂3, aperiódico,
       conjunto fino. Ver `docs/forge/known.md`. Lo que sigue es el muro.

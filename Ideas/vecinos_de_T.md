@@ -51,6 +51,13 @@ vecinos *en la misma signatura* contra los certificados de YAH. Falta revisar en
   - Matrices EWZ sobre `ℚ≥0`, `d = 2`: z3 no decide nada en 120 s por consulta (`unknown` en las 13).
     `sep` es sat de todos modos, porque los modelos naturales de `neighbor_matrix.py` también son racionales:
     el filtro **no** descarta esta clase, y `rm` queda abierto (hace falta otro solver o un encoding mejor).
+  - Matrices EWZ **racionales** con entradas `k/D` (`scripts/rational_search.py`, encoding entero con matrices
+    aumentadas): `d = 2`, `(D, B) ∈ {(2, 4), (3, 6), (2, 8)}`: `rm ρ` **unsat para las 11 reglas** (33 consultas).
+    Ninguna interpretación racional chica elimina una regla. (Con matrices enteras y vectores racionales se
+    reescala a una natural, así que lo nuevo exige matrices fraccionarias; ese es el caso que cubre la búsqueda.)
+- Dimensión 1 sobre `ℝ≥0`, a mano: las reglas fuerzan `m₀ ≥ m_t ≥ m₂ ≥ m_f m_t` ⇒ `m_f = 1` ⇒ todos los
+  factores de los dígitos valen 1; con traslaciones, `v_f = v_t`, `v₀ = v₁ = v₂ = c`, inicio ⇒ `c ≥ 2b`,
+  `t◁ → 2◁` ⇒ `b ≥ c` ⇒ todo 0. Ninguna regla es estricta, y la vecina queda orientada de forma trivial.
 
 ## Formalización
 `Collatz/Rewriting/Neighbors.lean`:
@@ -66,3 +73,9 @@ La hipótesis "la barrera de Nashida sale de los ciclos de `3x−1`" es **falsa*
 débilmente `𝒯` no fuerza orientar el vecino. Su barrera usa algo más que la existencia de vecinos cíclicos.
 Lo que queda en pie es el filtro: toda técnica nueva tiene que fallar en `e = 0, 1`, y esos sistemas sirven
 para descartar técnicas en segundos antes de buscar certificados para `𝒯`.
+
+Las matrices racionales están fuera del alcance de Nashida (README de su repo, sección "Scope": "rational, real and
+polynomial interpretations" no cubiertas), pero la búsqueda no encontró nada en las cotas probadas. Es lo esperable:
+eliminar `t◁ → 2◁` equivale a una función potencial, calculada por un autómata con pesos, que baja en cada paso impar
+de toda órbita, o sea a probar Collatz, y eliminar las demás implica enunciados profundos sobre ciclos hipotéticos.
+**Conclusión (2026-11-21): frente de reescritura en pausa; se pasa a ciclos.**
