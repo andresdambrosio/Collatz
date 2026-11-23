@@ -62,7 +62,9 @@ once. It takes about 30 minutes, once.
 
 ## Perspective
 
-How good is 15,601? Honestly, modest. With the computer verification up to $$2^{71}$$ (which is not
+How good is 15,601? Honestly, modest, and the method is not ours: it is Eliahou's (1993), who with a
+verification up to $$2^{40}$$ already proved that a cycle has length at least 17,087,915. Our script reproduces
+that number exactly from $$M = 2^{40}$$. With the computer verification up to $$2^{71}$$ (which is not
 checked in Lean), the same method gives about $$7 \times 10^{10}$$, and we have that as a Lean theorem
 *with the verification as an explicit hypothesis* (`hercher_lower_bound`). The literature also rules
 out cycles with up to 91 "local minima" for any length (Hercher, 2023) <span class="tag lit">literature</span>.

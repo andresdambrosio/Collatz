@@ -66,8 +66,12 @@ The first weeks went into building the foundations. Each of these will get its o
   computer-found certificates in Lean. Along the way I found, and fixed, a small gap in one of their
   arguments. <span class="tag verified">verified in Lean</span>
   ([`collatz_iff_terminatesAll`](https://github.com/andresdambrosio/Collatz/blob/main/Collatz/Rewriting/AllWords.lean))
-- **A first new number.** If a cycle exists, it needs at least **15,601** odd steps. My previous bound,
-  also checked end to end in Lean, was 2,301. <span class="tag verified">verified in Lean</span>
+- **A first number, checked end to end.** If a cycle exists, it needs at least **15,601** odd steps
+  <span class="tag verified">verified in Lean</span>. To be clear about credit: the method is classical
+  (it goes back to [Eliahou, 1993](https://doi.org/10.1016/0012-365X%2893%2990052-U)), and the literature has
+  much larger bounds, backed by computer verifications that are not formally checked
+  <span class="tag lit">literature</span>. What is new here is that every step, the computation included,
+  is checked by Lean's kernel. My previous bound checked this way was 2,301.
   ([`cycle_period_ge_15601`](https://github.com/andresdambrosio/Collatz/blob/main/Collatz/CycleBound/Final.lean))
 - **A lab for ideas.** I have also started testing ideas aimed at the full conjecture, and writing down
   why each one fails. The first lessons are sobering, and I'll share them honestly.
@@ -84,6 +88,8 @@ Lean proof, contributions are welcome.
 ## References
 
 - L. Collatz's problem: [Collatz conjecture](https://en.wikipedia.org/wiki/Collatz_conjecture), Wikipedia (overview and history).
+- S. Eliahou, "The 3x+1 problem: new lower bounds on nontrivial cycle lengths", *Discrete Mathematics* 118
+  (1993), 45–56. [doi:10.1016/0012-365X(93)90052-U](https://doi.org/10.1016/0012-365X%2893%2990052-U)
 - J. C. Lagarias, "The 3x+1 problem and its generalizations", *American Mathematical Monthly* 92 (1985), 3–23.
   [doi:10.1080/00029890.1985.11971528](https://doi.org/10.1080/00029890.1985.11971528)
 - D. Barina, "Improved verification limit for the convergence of the Collatz conjecture", *The Journal of

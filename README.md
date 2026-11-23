@@ -28,7 +28,7 @@ standard axioms (`propext`, `Classical.choice`, `Quot.sound`). Run
 | Collatz ⇔ termination of the 11-rule string rewriting system 𝒯 of Yolcu–Aaronson–Heule, on canonical words and on **all** words (their Thm 3.17 and Lemma 3.16) | `collatz_iff_terminates`, `collatz_iff_terminatesAll` | `Collatz/Rewriting.lean`, `Collatz/Rewriting/AllWords.lean` |
 | Their termination certificates for the 11 subsystems 𝒯 ∖ {ρ} and for the Farkas variant, re-checked (we found and fixed a gap in their §4.2 argument) | `SRS.termIn_without`, `farkas_convergent` | `Collatz/Rewriting/` |
 | "Neighbor" systems (3x−1, 3x−3) where no rule can be removed: a filter against certificate techniques | `SRS.Neighbor.not_relSN_d1`, `not_relSN_d0` | `Collatz/Rewriting/Neighbors.lean` |
-| **Every nontrivial cycle has at least 15 601 odd steps** (unconditional, checked by the kernel; previously 2 301) | `cycle_period_ge_15601` | `Collatz/CycleBound/` |
+| **Every nontrivial cycle has at least 15 601 odd steps**: unconditional and checked entirely by the kernel (previously 2 301). The method is Eliahou's (1993); the literature has far larger bounds based on computer verifications that are not formally checked | `cycle_period_ge_15601` | `Collatz/CycleBound/` |
 | Library from CollatzForge: Terras' lemma, cycle equation, constraints on a hypothetical divergent orbit | see `Collatz/Forge/` | `Collatz/Forge/` |
 
 What is **not** here: a proof of the conjecture, or of either half of it. The idea lab
