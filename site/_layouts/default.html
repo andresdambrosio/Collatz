@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if page.title %}{{ page.title }} · {% endif %}{{ site.title }}</title>
+  <meta name="description" content="{{ page.description | default: site.description }}">
+  <meta property="og:title" content="{{ page.title | default: site.title }}">
+  <meta property="og:description" content="{{ page.description | default: site.description }}">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
+  <script>
+    window.MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] } };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+  <header>
+    <a class="site-title" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+    <nav>
+      <a href="{{ '/status/' | relative_url }}">Status</a>
+      <a href="{{ '/rules/' | relative_url }}">Rules</a>
+      <a href="{{ site.repo }}">GitHub</a>
+    </nav>
+  </header>
+  <main>
+    {{ content }}
+  </main>
+  <footer>
+    <p>The Collatz conjecture is <strong>open</strong>. Claims here are labeled:
+    <span class="tag verified">verified in Lean</span>
+    <span class="tag lit">literature</span>
+    <span class="tag heur">heuristic</span>
+    <span class="tag open">open</span>.
+    Code and posts: <a href="{{ site.repo }}">GitHub</a>, Apache-2.0.</p>
+  </footer>
+</body>
+</html>

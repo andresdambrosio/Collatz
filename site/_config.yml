@@ -1,0 +1,12 @@
+title: "Collatz in Lean"
+description: "An open, honest attempt at the Collatz conjecture, every claim checked by Lean."
+url: "https://andresdambrosio.github.io"
+baseurl: "/Collatz"
+repo: "https://github.com/andresdambrosio/Collatz"
+markdown: kramdown
+kramdown:
+  math_engine: mathjax
+  syntax_highlighter_opts:
+    disable: true
+permalink: /:year/:month/:day/:title/
+exclude: [README.md]
