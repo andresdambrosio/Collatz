@@ -81,10 +81,13 @@ Cota según `M` (mínimo `k` con `0 < A − k·log₂3 ≤ k·log₂(1 + 1/(3M))
 |---|---|---|---|---|---|
 | k ≥ | 2 301 | 15 601 | 47 468 | 190 537 | 10 781 274 |
 
-- [ ] Lema en Lean: si todo impar `n < M` desciende, no hay elemento de ciclo `< M` (el mínimo de un ciclo no desciende)
-- [ ] Criba de Terras verificada: las clases mod `2^j` que descienden en ≤ `j` pasos, para todo `q`
-- [ ] Chequeo de los sobrevivientes `< M` (kernel hasta ~10⁸–10⁹; con `native_decide` hasta ~10¹⁰)
-- [ ] Nueva cota con el sándwich + `cf_unimodular_gap`
+- [x] Lema en Lean: si todo impar `n < M` desciende, no hay elemento de ciclo `< M`
+      (`syracuse_cycle_ge_of_descends`, `cycle_sandwich_of_descends`, `Collatz/CycleBound.lean`)
+- [x] Criba de Terras verificada (`symDesc_sound`) y chequeo numérico de los sobrevivientes (`dropsB_sound`)
+- [x] **`M = 78·2²⁰ = 81 788 928`, todo en el kernel: todo ciclo no trivial tiene ≥ 15 601 pasos impares**
+      (`Collatz.syracuse_cycle_length_ge_15601`; período de `T` ≥ 15 601: `cycle_period_ge_15601`).
+      Antes: 2301. Archivos generados por `scripts/gen_cycle_blocks.py` en `Collatz/CycleBound/`
+- [ ] Siguiente salto: `M ≈ 2,9·10⁸` da `k ≥ 47 468` (3,5× más cómputo); `M ≈ 1,5·10⁹` da `79 335`
 Es una mejora del resultado *formal*; la literatura (con verificación a 2⁷¹, no formal) tiene ≥ 1,1·10¹¹.
 
 ### Fase 5 — Frente divergencia (`no_divergent_orbits`)

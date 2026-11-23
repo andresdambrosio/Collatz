@@ -70,9 +70,12 @@ theorem oddPart_iterate_collatz_le {n : ℕ} (hn : n % 2 = 1) (j : ℕ) :
       rw [Collatz.collatz_of_odd ho, Function.iterate_succ_apply', ← hk, hodd]
       rfl
 
-/-- **Todo ciclo no trivial de `T` tiene período al menos 2301.** Incondicional. -/
-theorem cycle_period_ge {n p : ℕ} (hn : n ≥ 1) (hp : p ≥ 1) (h : iter p n = n)
-    (hnt : ¬ InTrivialCycle n) : 2301 ≤ p := by
+/-- Una cota `B` para los ciclos no triviales de Syracuse (en pasos impares) da la misma cota
+para el período de los ciclos no triviales de `T`. -/
+theorem cycle_period_ge_of {B : ℕ}
+    (hB : ∀ {m k : ℕ}, m % 2 = 1 → 0 < k → Collatz.syracuse^[k] m = m → m ≠ 1 → B ≤ k)
+    {n p : ℕ} (hn : n ≥ 1) (hp : p ≥ 1) (h : iter p n = n)
+    (hnt : ¬ InTrivialCycle n) : B ≤ p := by
   rw [iter_eq_iterate] at h
   -- el ciclo contiene un impar `m = collatz^[j] n`
   obtain ⟨j, hj⟩ := Collatz.exists_odd_of_isPeriodic (by omega) ⟨p, hp, h⟩
@@ -97,5 +100,11 @@ theorem cycle_period_ge {n p : ℕ} (hn : n ≥ 1) (hp : p ≥ 1) (h : iter p n 
   -- `m` es Syracuse-periódico con a lo sumo `p` pasos
   obtain ⟨k, hk, hk1, hkp⟩ := oddPart_iterate_collatz_le hj p
   rw [hmp, Collatz.oddPart_of_odd (Nat.odd_iff.mpr hj)] at hk
-  have := Collatz.k12_syracuse_cycle_length_ge hj (hk1 hp) hk.symm hm1
+  have := hB hj (hk1 hp) hk.symm hm1
   omega
+
+/-- **Todo ciclo no trivial de `T` tiene período al menos 2301.** Incondicional. -/
+theorem cycle_period_ge {n p : ℕ} (hn : n ≥ 1) (hp : p ≥ 1) (h : iter p n = n)
+    (hnt : ¬ InTrivialCycle n) : 2301 ≤ p :=
+  cycle_period_ge_of (fun hm hk h' hne => Collatz.k12_syracuse_cycle_length_ge hm hk h' hne)
+    hn hp h hnt

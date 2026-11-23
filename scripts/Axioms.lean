@@ -6,6 +6,9 @@ import Collatz
 #print axioms noNontrivialCycles_iff_forge
 #print axioms noDivergentOrbits_iff_forge
 #print axioms cycle_period_ge
+#print axioms cycle_period_ge_15601
+#print axioms Collatz.syracuse_cycle_length_ge_15601
+#print axioms Collatz.cycle_sandwich_of_descends
 #print axioms collatz_iff_terminates
 #print axioms SRS.terminatesAll_iff
 #print axioms collatz_iff_terminatesAll

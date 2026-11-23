@@ -6,4 +6,5 @@ import Collatz.Rewriting.Subsystems
 import Collatz.Rewriting.Farkas
 import Collatz.Rewriting.AllWords
 import Collatz.Rewriting.Neighbors
+import Collatz.CycleBound.Final
 import Collatz.Main

@@ -13,6 +13,11 @@ Proyecto Lake (Lean `v4.33.1` + Mathlib) para formalizar la conjetura de Collatz
   Docs originales en `docs/forge/` (journal, known, strategy, prior_art).
 - `Collatz/Bridge.lean`: equivalencias entre las dos convenciones y `cycle_period_ge` (período ≥ 2301).
   Ojo: el `T` de la raíz es el mapa clásico; `Collatz.T` es el acelerado.
+- `Collatz/CycleBound.lean` + `Collatz/CycleBound/` (**generados** por `scripts/gen_cycle_blocks.py`):
+  `cycle_period_ge_15601` (incondicional, kernel): criba de Terras mod 2^20 + descenso de los impares < 81 788 928.
+  **Memoria:** cada bloque `decide +kernel` usa ~0,65 GB propios; los 16 archivos `Res*` están en dos
+  cadenas de imports para que `lake` compile a lo sumo dos a la vez (~30 min reales desde cero). No agrandar
+  los bloques ni romper las cadenas: un intento con bloques 8× más grandes en paralelo colgó una máquina de 16 GB.
 - `Collatz/Rewriting.lean`: sistema de reescritura de Yolcu–Aaronson–Heule (namespace `SRS`) y `collatz_iff_terminates`.
 - `Collatz/Rewriting/`: `Natural.lean`/`Arctic.lean` (verificador de interpretaciones matriciales),
   `SubsystemsNat.lean`/`SubsystemsArc.lean` (**generados** por `scripts/certs.py --gen <dir-proofs>`; no editar a mano),
