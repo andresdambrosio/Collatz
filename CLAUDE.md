@@ -26,6 +26,8 @@ Proyecto Lake (Lean `v4.33.1` + Mathlib) para formalizar la conjetura de Collatz
   `AllWords.lean` (Lema 3.16: `collatz_iff_terminatesAll`, terminación sobre todas las palabras),
   `Neighbors.lean` (vecinos `t◁ → e◁` de `𝒯`: en 3x−1 y 3x−3 no se elimina ninguna regla).
 - `scripts/neighbors.py`, `neighbor_matrix.py`, `neighbor_classes.py`: vecinos de `𝒯` y filtro de clases de certificados con z3 (`pip install --user z3-solver`).
+- `scripts/labelled_neighbors.py`, `labelled_search.py`: etiquetado semántico mod m de `𝒯` (laboratorio, ronda 3).
+- `Ideas/LAB.md`: laboratorio de ideas hacia la prueba completa (protocolo, rondas, síntesis).
 - `docs/prior_art_rewriting.md`: prior art de la Fase 4 (Nashida 2026: barreras en Lean).
 - `scripts/certs.py`: parser/chequeo de certificados de YAH; `scripts/srs.py`, `scripts/farkas_check.py`: chequeos numéricos.
 - `Collatz/Main.lean`: los dos objetivos abiertos (`sorry`) y `collatz_conjecture`.

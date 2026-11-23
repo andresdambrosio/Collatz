@@ -95,6 +95,12 @@ Es una mejora del resultado *formal*; la literatura (con verificación a 2⁷¹,
       conjunto fino. Ver `docs/forge/known.md`. Lo que sigue es el muro.
 - [ ] Laboratorio de ideas: funciones potencial, árbol inverso, argumentos 2-ádicos, acarreos en binario
 
+## Laboratorio de ideas (desde 2026-11-23)
+Cinco rondas documentadas en `Ideas/LAB.md`: minería de literatura, catálogo de Chang (29 paradigmas),
+etiquetado semántico + matrices (`scripts/labelled_*.py`), obstrucción de logaritmo discreto (colapsa en
+Hercher `m ≥ 92`), problema de Erdős. Síntesis: toda vía termina en probar algo sobre UNA órbita concreta.
+Próximo: `Collatz/Frontier.lean` (atlas de enunciados abiertos + reducciones verificadas).
+
 ## Estado de los `sorry`
 | Teorema | Archivo | Estado |
 |---|---|---|
