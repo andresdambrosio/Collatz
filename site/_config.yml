@@ -10,3 +10,4 @@ kramdown:
     disable: true
 permalink: /:year/:month/:day/:title/
 exclude: [README.md]
+future: true

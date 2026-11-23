@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Hello, Collatz: an honest attempt, checked by a machine"
-date: 2026-11-23 09:00:00 -0300
+date: 2026-11-23 06:00:00 -0300
 tldr: "We are attacking the Collatz conjecture in the open. Every result is checked by the Lean proof assistant, every claim is labeled, and every failure is published."
 ---
 

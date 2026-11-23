@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Five rounds in the idea lab: every road ends at a single orbit"
-date: 2026-11-23 12:00:00 -0300
+date: 2026-11-23 09:00:00 -0300
 tldr: "We ran a disciplined 'idea lab' aimed at the full conjecture: generate ideas, kill them fast, write down why. Five rounds in, every road ends at the same wall: proving something about one specific orbit, not almost all of them."
 ---
 

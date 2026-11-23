@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "A Collatz cycle would need at least 15,601 odd steps"
-date: 2026-11-23 11:00:00 -0300
+date: 2026-11-23 08:00:00 -0300
 tldr: "If some number ever came back to itself, that loop would need at least 15,601 odd steps. This bound is fully checked by Lean's kernel, with no unproved assumptions, up from 2,301. The trick: you don't need numbers to reach 1, only to dip below themselves."
 ---
 

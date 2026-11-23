@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Collatz as a game of rewriting words, checked in Lean"
-date: 2026-11-23 10:00:00 -0300
+date: 2026-11-23 07:00:00 -0300
 tldr: "Yolcu, Aaronson and Heule turned Collatz into a question about 11 rules that rewrite short words. We checked their equivalence, their computer-found certificates, and found (and fixed) a small gap along the way."
 ---
 
