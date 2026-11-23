@@ -1,17 +1,19 @@
 ---
 layout: default
 title: Home
+ref: home
 ---
-<p><em>Collatz in Lean</em> is an open, honest attempt at the Collatz conjecture.
-Every result we call <span class="tag verified">verified in Lean</span> has been accepted by the
-Lean proof assistant's kernel; everything else is labeled for what it is. The conjecture is
-<span class="tag open">open</span>, here as everywhere. Start with
-<a href="{{ '/rules/' | relative_url }}">the rules</a> or the <a href="{{ '/status/' | relative_url }}">status page</a>.</p>
+<p class="lede">I'm <a href="https://x.com/{{ site.x_handle }}">Andrés D'Ambrosio</a>, and my goal is to
+<strong>prove the Collatz conjecture</strong>, sharing everything along the way: what works, what fails, and why.
+Every result I call <span class="tag verified">verified in Lean</span> is checked by the Lean proof assistant;
+everything else is labeled for what it is. The conjecture is still <span class="tag open">open</span>.
+The <a href="{{ '/rules/' | relative_url }}">rules</a> explain how this works.</p>
 <h2>Posts</h2>
 <ul class="posts">
-{% for post in site.posts %}
+{% assign posts = site.posts | where: "lang", "en" %}
+{% for post in posts %}
   <li>
-    <span class="date">{{ post.date | date: "%B %-d, %Y" }}</span>
+    <span class="date">{{ post.date | date: "%Y-%m-%d" }}</span>
     <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
     {% if post.tldr %}<div class="sum">{{ post.tldr }}</div>{% endif %}
   </li>

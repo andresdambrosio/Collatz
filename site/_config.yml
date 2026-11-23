@@ -1,5 +1,7 @@
 title: "Collatz in Lean"
-description: "An open, honest attempt at the Collatz conjecture, every claim checked by Lean."
+description: "Andrés D'Ambrosio's open attempt to prove the Collatz conjecture, every claim checked by Lean."
+author: "Andrés D'Ambrosio"
+x_handle: "andresdambrosio"
 url: "https://andresdambrosio.github.io"
 baseurl: "/Collatz"
 repo: "https://github.com/andresdambrosio/Collatz"
@@ -9,5 +11,12 @@ kramdown:
   syntax_highlighter_opts:
     disable: true
 permalink: /:year/:month/:day/:title/
-exclude: [README.md]
 future: true
+exclude: [README.md]
+defaults:
+  - scope: { path: "" }
+    values: { lang: en }
+  - scope: { path: "es" }
+    values: { lang: es }
+  - scope: { path: "es", type: posts }
+    values: { permalink: "/es/:year/:month/:day/:title/" }

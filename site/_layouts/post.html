@@ -1,10 +1,11 @@
 ---
 layout: default
 ---
+{%- assign t = site.data.i18n[page.lang] -%}
 <article>
   <h1>{{ page.title }}</h1>
-  <p class="meta">{{ page.date | date: "%B %-d, %Y" }}{% if page.author %} · {{ page.author }}{% endif %}</p>
+  <p class="meta">{{ page.date | date: "%Y-%m-%d" }} · <a href="https://x.com/{{ site.x_handle }}">{{ site.author }}</a></p>
   {% if page.tldr %}<p class="tldr"><strong>TL;DR.</strong> {{ page.tldr }}</p>{% endif %}
   {{ content }}
 </article>
-<p class="back"><a href="{{ '/' | relative_url }}">← All posts</a></p>
+<p class="back"><a href="{{ t.home | relative_url }}">{{ t.all_posts }}</a></p>

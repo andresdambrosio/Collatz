@@ -1,0 +1,22 @@
+---
+layout: default
+title: Inicio
+ref: home
+permalink: /es/
+---
+<p class="lede">Soy <a href="https://x.com/{{ site.x_handle }}">Andrés D'Ambrosio</a> y mi objetivo es
+<strong>demostrar la conjetura de Collatz</strong>, compartiendo todo en el camino: lo que funciona, lo que falla y por qué.
+Cada resultado que marco como <span class="tag verified">verificado en Lean</span> lo chequea el asistente de pruebas Lean;
+todo lo demás lleva la etiqueta que le corresponde. La conjetura sigue <span class="tag open">abierta</span>.
+Las <a href="{{ '/es/reglas/' | relative_url }}">reglas</a> explican cómo funciona esto.</p>
+<h2>Entradas</h2>
+<ul class="posts">
+{% assign posts = site.posts | where: "lang", "es" %}
+{% for post in posts %}
+  <li>
+    <span class="date">{{ post.date | date: "%Y-%m-%d" }}</span>
+    <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+    {% if post.tldr %}<div class="sum">{{ post.tldr }}</div>{% endif %}
+  </li>
+{% endfor %}
+</ul>

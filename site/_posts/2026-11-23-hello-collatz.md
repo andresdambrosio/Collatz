@@ -1,9 +1,12 @@
 ---
 layout: post
-title: "Hello, Collatz: an honest attempt, checked by a machine"
+title: "Hello, Collatz: I'm going to try to prove it, in public"
 date: 2026-11-23 06:00:00 -0300
-tldr: "We are attacking the Collatz conjecture in the open. Every result is checked by the Lean proof assistant, every claim is labeled, and every failure is published."
+ref: hello
+tldr: "The Collatz conjecture is one of the simplest open problems in mathematics. My goal is to prove it, sharing everything along the way, with every result checked by the Lean proof assistant. Here is the problem, the plan, and the first results."
 ---
+
+## The problem
 
 Pick a positive integer. If it is even, halve it. If it is odd, triple it and add one. Repeat.
 
@@ -11,49 +14,62 @@ Starting from 7:
 
 $$7 \to 22 \to 11 \to 34 \to 17 \to 52 \to 26 \to 13 \to 40 \to 20 \to 10 \to 5 \to 16 \to 8 \to 4 \to 2 \to 1.$$
 
-The **Collatz conjecture** says that, whatever number you start from, you always end at 1.
-It is one of the simplest-sounding open problems in mathematics. Paul Erdős reportedly said that
-"mathematics may not be ready for such problems". It has been checked by computer for every starting
-value below $$2^{71}$$ <span class="tag lit">literature</span>, and Terence Tao proved in 2019 that
-*almost all* orbits reach *almost* bounded values <span class="tag lit">literature</span>. Nobody knows
-how to prove it for *every* number <span class="tag open">open</span>.
+Starting from 27, the journey takes 111 steps and climbs as high as 9,232 before falling back to 1.
 
-## Why now, and why like this
+The **Collatz conjecture** (1937) says that, whatever number you start from, you always end at 1.
+Anyone can understand it in ten seconds; nobody has been able to prove it in almost ninety years. Paul
+Erdős is often quoted as saying that "mathematics may not be ready for such problems".
 
-In October and November 2026, AI systems were involved in two announcements about the Riemann
-hypothesis: a proof of a weaker "quasi-Riemann" statement, and a claimed proof of the full hypothesis
-delivered as a library for the Lean proof assistant (not yet independently verified when this was
-written). Whatever happens with those claims, they show a way of working: let a machine do a lot of
-the heavy lifting, and let **another** machine, a proof checker, decide what is true.
+What is known <span class="tag lit">literature</span>:
 
-That is what this project does for Collatz, at a much smaller scale. All the mathematics lives in a
-public repository written in [Lean 4](https://lean-lang.org) with
-[Mathlib](https://github.com/leanprover-community/mathlib4). Lean's kernel is a small program that
-checks every step of every proof. If it accepts a theorem, the theorem follows from the axioms,
-no matter who (or what) wrote the proof.
+- It has been checked by computer for every starting number below $$2^{71}$$, about
+  $$2.4 \times 10^{21}$$ (Barina, 2025).
+- Terence Tao proved in 2019 that *almost all* starting numbers reach *almost* bounded values. It is the
+  strongest result to date, and it still says nothing about *every* number.
 
-## What we have, and what we don't
+And what is not: whether it holds for every number is <span class="tag open">open</span>.
 
-We **don't** have a proof of the Collatz conjecture. In the repository the statement is still marked
-`sorry`, Lean's word for "not proved yet", and the [status page]({{ '/status/' | relative_url }}) will
-say so until that changes.
+## The goal
 
-What we do have, all <span class="tag verified">verified in Lean</span>:
+**My goal is to prove the Collatz conjecture**, and to share everything along the way: the progress, the
+dead ends, and the reasons behind each one.
 
-- the reduction of Collatz to "no cycles" plus "no divergent orbits";
-- a complete check of a beautiful reformulation by Yolcu, Aaronson and Heule: Collatz is equivalent to
-  the termination of a small *string rewriting system* (the next post explains it);
-- a new, kernel-checked bound: **every nontrivial cycle would need at least 15 601 odd steps**;
-- and a documented "idea lab" where five rounds of attempts are written down together with the exact
-  reason each one stops.
+I know how that sounds. Many people have announced proofs of Collatz, and they have all been wrong. So
+this project follows strict [rules]({{ '/rules/' | relative_url }}), and the first one is the important one:
+**a machine decides what is true.**
 
-## How to read this blog
+Everything lives in a public repository written in [Lean 4](https://lean-lang.org), a proof assistant.
+Lean's kernel is a small program that checks every single step of every proof. If it accepts a theorem,
+the theorem is correct, no matter who wrote it. That matters here, because I work with an AI assistant
+(Claude, by Anthropic) that writes much of the code. In the last few weeks AI systems have been involved
+in serious results on the Riemann hypothesis, one of them delivered as a Lean library. I want to find out
+how far this way of working can go on Collatz.
 
-Each mathematical claim carries a label: <span class="tag verified">verified in Lean</span>,
+Every claim on this blog carries a label: <span class="tag verified">verified in Lean</span>,
 <span class="tag lit">literature</span>, <span class="tag heur">heuristic</span>, or
-<span class="tag open">open</span>. The [rules]({{ '/rules/' | relative_url }}) explain them. The
-repository is open, and contributions are welcome under the same rules.
+<span class="tag open">open</span>. The conjecture itself stays <span class="tag open">open</span> until
+Lean accepts a proof.
 
-The project is a collaboration between me (Andrés) and Claude, an AI assistant by Anthropic, which
-writes much of the Lean and the analysis. I'm hoping we get somewhere new. If we do, Lean will be the
-first to know.
+## First results
+
+The first weeks went into building the foundations. Each of these will get its own post:
+
+- **Two ways the conjecture could fail.** It is false if and only if some number cycles back to itself
+  without reaching 1, or some number grows forever. <span class="tag verified">verified in Lean</span>
+- **Collatz as a game with words.** In 2021, Yolcu, Aaronson and Heule showed that the conjecture is
+  equivalent to a game that rewrites short words using 11 rules. I checked their theorem and their
+  computer-found certificates in Lean. Along the way I found, and fixed, a small gap in one of their
+  arguments. <span class="tag verified">verified in Lean</span>
+- **A first new number.** If a cycle exists, it needs at least **15,601** odd steps. My previous bound,
+  also checked end to end in Lean, was 2,301. <span class="tag verified">verified in Lean</span>
+- **A lab for ideas.** I have also started testing ideas aimed at the full conjecture, and writing down
+  why each one fails. The first lessons are sobering, and I'll share them honestly.
+
+None of this proves Collatz. It is the ground I'll build on.
+
+## Follow along
+
+New posts will come as the work advances. I'll announce them on X:
+[@andresdambrosio](https://x.com/andresdambrosio). The
+[repository](https://github.com/andresdambrosio/Collatz) is open: if you have an idea, a correction, or a
+Lean proof, contributions are welcome.
