@@ -21,10 +21,25 @@
   <title>{% if page.title and page.title != "Home" %}{{ page.title }} · {% endif %}{{ site.title }}</title>
   <meta name="description" content="{{ page.tldr | default: page.description | default: site.description | strip_html }}">
   <meta name="author" content="{{ site.author }}">
-  <meta property="og:title" content="{{ page.title | default: site.title }}">
-  <meta property="og:description" content="{{ page.tldr | default: site.description | strip_html }}">
-  <meta name="twitter:card" content="summary">
+  {%- assign share_title = site.title -%}
+  {%- if page.layout == "post" or page.layout == "page" -%}{%- assign share_title = page.title -%}{%- endif -%}
+  {%- assign share_desc = page.tldr | default: site.description | strip_html -%}
+  {%- assign share_img = page.image | default: "/assets/og.png" | absolute_url -%}
+  <meta property="og:type" content="{% if page.layout == 'post' %}article{% else %}website{% endif %}">
+  <meta property="og:site_name" content="{{ site.title }}">
+  <meta property="og:url" content="{{ page.url | absolute_url }}">
+  <meta property="og:title" content="{{ share_title }}">
+  <meta property="og:description" content="{{ share_desc }}">
+  <meta property="og:image" content="{{ share_img }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="{% if lang == 'es' %}es_AR{% else %}en_US{% endif %}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@{{ site.x_handle }}">
   <meta name="twitter:creator" content="@{{ site.x_handle }}">
+  <meta name="twitter:title" content="{{ share_title }}">
+  <meta name="twitter:description" content="{{ share_desc }}">
+  <meta name="twitter:image" content="{{ share_img }}">
   <link rel="alternate" hreflang="{{ other }}" href="{{ switch_url | absolute_url }}">
   <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
   <script>
