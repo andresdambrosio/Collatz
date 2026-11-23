@@ -31,6 +31,11 @@ Proyecto Lake (Lean `v4.33.1` + Mathlib) para formalizar la conjetura de Collatz
 - `docs/prior_art_rewriting.md`: prior art de la Fase 4 (Nashida 2026: barreras en Lean).
 - `scripts/certs.py`: parser/chequeo de certificados de YAH; `scripts/srs.py`, `scripts/farkas_check.py`: chequeos numéricos.
 - `Collatz/Main.lean`: los dos objetivos abiertos (`sorry`) y `collatz_conjecture`.
+- `site/`: blog público (Jekyll, GitHub Pages, EN por defecto + ES en `site/es/`, emparejados por `ref:`).
+  Borradores sin publicar en `site/_drafts/`; se publican de a uno (EN + ES). Cada afirmación lleva etiqueta
+  (verified in Lean / literature / heuristic / open). Imagen para redes: `scripts/make_og_image.py`.
+- `README.md`, `CONTRIBUTING.md`, `LICENSE` (Apache-2.0), `NOTICE`: cara pública del repo (en inglés).
+  `.codex/` y `AGENTS.md` son del usuario: no commitearlos.
 - `PLAN.md`: plan de trabajo por fases; mantenerlo actualizado. `Ideas/`: una idea por archivo (ver `_PLANTILLA.md`).
 - `scripts/verify.py`: verificación numérica del descenso (`python3 scripts/verify.py 10000000`).
 
