@@ -54,3 +54,7 @@ import Collatz
 #print axioms Collatz.hercher_lower_bound
 #print axioms Collatz.k12_verifiedBelow_600001
 #print axioms Collatz.k12_syracuse_cycle_length_ge
+#print axioms Collatz.Opfer.theorem_4_17_iff_collatz
+#print axioms Collatz.Opfer.collatz_of_theorem_4_17
+#print axioms Collatz.Carries.out_injective_below
+#print axioms Collatz.Carries.stepC_injective_below

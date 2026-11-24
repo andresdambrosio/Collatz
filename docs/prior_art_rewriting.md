@@ -50,3 +50,20 @@ Son verificaciones formales de resultados publicados, no resultados nuevos sobre
   comparaciones lexicográficas, otros semianillos, o transformaciones previas que él no cubre.
 - Las clases mod 4/mod 8 de YAH (§4.5) pierden interés como certificados de reescritura: Nashida ya tiene en
   Lean versiones más fuertes a nivel de números.
+
+## Actualización 2026-11-23 (búsqueda de novedad para un paper)
+
+- **TPDB** (github.com/TermCOMP/TPDB, `SRS_Standard/Yolcu_21/`): están `collatz-T.xml`, `farkas.xml`, `collatz-L.xml`,
+  `collatz-S.xml`, `collatz-T-5or7mod8.xml`, `barina.xml`, `mahler.xml`, `michel.xml` y `silva.xml`. **No** están los 11
+  subsistemas `𝒯 ∖ {ρ}`. La Termination Competition tiene una categoría SRS **certificada con CeTA** (Isabelle).
+  **Riesgo abierto:** que alguna herramienta (por ejemplo AProVE en modo certificado) haya certificado `farkas.xml` en
+  termCOMP 2021–2025. Hay que mirar los resultados por problema en StarExec / termcomp.github.io. Aun así, CeTA
+  certifica la terminación del SRS, **no** la equivalencia "terminación ⇒ convergencia", que es donde está el hueco
+  de §4.2.
+- **YAH v3** (arXiv, 31-dic-2022, la última versión): no menciona CeTA ni ningún asistente de pruebas (grep sobre el
+  texto completo). §4.2, cita textual: "repeatedly performing the rightmost possible rewrite results in a rewrite sequence
+  that simulates the F-trajectory". Es exactamente lo que encontramos falso en `▷t◁`, `▷f◁`, `▷ft◁`. No hay errata.
+- **Nashida**: sin pushes desde el 16-oct-2026. El alcance no cambió (Teo. 3.17 y los subsistemas siguen fuera).
+- **Otras formalizaciones de Collatz en Lean**: no encontré ninguna de la vía de reescritura. Paulson (blog, 30-jul-2026)
+  cuenta que una "refutación" de Collatz en Lean (Ramana Kumar, xrchz/CollatzLean) explotaba un bug del kernel.
+  Es relevante para la sección de confianza del paper: nuestra cota de ciclos usa `decide +kernel` en volumen.

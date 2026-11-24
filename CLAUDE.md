@@ -27,6 +27,10 @@ Proyecto Lake (Lean `v4.33.1` + Mathlib) para formalizar la conjetura de Collatz
   `Neighbors.lean` (vecinos `t◁ → e◁` de `𝒯`: en 3x−1 y 3x−3 no se elimina ninguna regla).
 - `scripts/neighbors.py`, `neighbor_matrix.py`, `neighbor_classes.py`: vecinos de `𝒯` y filtro de clases de certificados con z3 (`pip install --user z3-solver`).
 - `scripts/labelled_neighbors.py`, `labelled_search.py`: etiquetado semántico mod m de `𝒯` (laboratorio, ronda 3).
+- `Collatz/Opfer.lean`: el algoritmo de aniquilación de Opfer (2011) es el mapa de Collatz; `theorem_4_17_iff_collatz`.
+- `Collatz/Carries.lean`: con cualquier regla de acarreo, el paso `n + 2n + 1` es inyectivo sobre las últimas m cifras.
+- `scripts/carry_*.py`: escalera de acarreos `C_k` (ronda 6): `carry_trunc` (mapa), `carry_potential*` (LP de potenciales
+  locales), `carry_srs*` (SRS + certificados de largo acotado; `carry_srs_sat.py` usa python-sat/CaDiCaL). Ver `Ideas/acarreos.md`.
 - `Ideas/LAB.md`: laboratorio de ideas hacia la prueba completa (protocolo, rondas, síntesis).
 - `docs/prior_art_rewriting.md`: prior art de la Fase 4 (Nashida 2026: barreras en Lean).
 - `scripts/certs.py`: parser/chequeo de certificados de YAH; `scripts/srs.py`, `scripts/farkas_check.py`: chequeos numéricos.

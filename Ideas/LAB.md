@@ -155,3 +155,21 @@ reformulaciones, barreras y cotas, no avances hacia la prueba.
   es una órbita larga "forzada" (vectores de paridad con densidad alta realizados por Terras).
 - Idea 6: búsqueda bibliográfica dirigida (sumas de dígitos simultáneas en bases 2 y 3 es el candidato
   más natural: un número tiene que "verse" a la vez en ambas bases).
+
+## Ronda 6: deformar el análogo resuelto de 𝔽₂[x] hacia ℤ, agregando acarreos (2026-11-23) — viva
+Detalle en `Ideas/acarreos.md`. En 𝔽₂[x] la conjetura está demostrada (Hicks–Mullen–Yucas–Zavislak 2008) y equivale
+a 3n+1 **sin acarreos** (Monks 2025). Primera familia, `ℤ[2^{1/d}]` (acarreo diferido): todo diverge para `d ≥ 2`
+(se pierde la contracción arquimediana); descartada. Segunda, `C_k` (acarreos que mueren tras `k` posiciones):
+interpola entre 𝔽₂[x] (`k = 0`) y ℤ (`k = ∞`). No se observa divergencia para ningún `k`, hay ciclos espurios y,
+para `k = 2` y `k ≥ 4`, excursiones lineales como en ℤ. Pasa el filtro 5n+1 para `k ≥ 4`.
+**Cerrada:** no hay potencial local monótono para `C_2` (LP infactible hasta ventanas de 7 bits; `C_0` factible, Collatz
+infactible). Todos los `C_k` son biyecciones de ℤ₂ que conservan la medida, conjugadas al shift como Collatz: la
+dificultad aparece completa con acarreos de largo 2. Lo que distingue los problemas es sólo la positividad y el tamaño arquimediano.
+
+## Ronda 7: Berg–Meinardus / Opfer (análisis complejo) (2026-11-23) — cerrada
+Detalle en `Ideas/berg_meinardus.md`. `K = ker U ∩ ker V` ≅ funciones constantes en las componentes del grafo de
+Collatz: la condición de holomorfía es vacía (coeficientes 0/1), y la formulación es "el grafo es conexo" en otro idioma.
+El hueco de Opfer (2011): su algoritmo de aniquilación es el mapa de Collatz comprimido (verificado para ℓ < 2·10⁵),
+así que su Teorema 4.17 es la conjetura: la prueba es circular. Szegő y Mahler/Cobham (Adamczewski–Bell) no aplican.
+**Síntesis de las rondas 6–7:** en todas las traducciones probadas (2-ádica, polinomial, acarreos, analítica), el problema
+se ve igual o se vuelve trivial. Lo que nunca viaja es la interacción entre el tamaño real y la estructura 2-ádica.

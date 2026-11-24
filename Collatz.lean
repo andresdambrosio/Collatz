@@ -7,4 +7,6 @@ import Collatz.Rewriting.Farkas
 import Collatz.Rewriting.AllWords
 import Collatz.Rewriting.Neighbors
 import Collatz.CycleBound.Final
+import Collatz.Opfer
+import Collatz.Carries
 import Collatz.Main
