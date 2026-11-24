@@ -28,9 +28,14 @@ Run by Andrés D'Ambrosio on a 16 GB macOS machine.
    `#print axioms` gives **`[propext, Classical.choice, Quot.sound]`**, for the whole dependency chain including M2.
 5. **Fresh-kernel replay.** `leanchecker --fresh ConjectureAZ` and `leanchecker --fresh GrowthExponent` both
    **exit 0** (about 6 minutes each).
-6. **Statement fidelity.** The definition of `π_a(x)` (it counts `|n| ≤ x`, negative `n` included) matches Lagarias's
-   summary of the paper in his annotated bibliography (arXiv:math/0309224, entry Applegate–Lagarias 1995a). The form
-   "for all `x ≥ |a|`" is the natural one, since below `|a|` there may be no predecessors at all.
+6. **Statement fidelity.** We compared against the text of Applegate–Lagarias, *Density Bounds for the 3x+1 Problem I.
+   Tree-Search Method* (AT&T Bell Laboratories preprint dated December 15, 1993; the published version is *Math. Comp.*
+   64 (1995), 411–426, [doi:10.1090/S0025-5718-1995-1270612-0](https://doi.org/10.1090/S0025-5718-1995-1270612-0)). In the preprint, (1.1) defines `T : ℤ → ℤ` as `(3x+1)/2` on odd `x` and `x/2` on even `x`;
+   (1.2) defines `π_a(x) = #{n : |n| ≤ x and some T^(k)(n) = a, k ≥ 0}`; and Conjecture A reads "For each
+   `a ≢ 0 (mod 3)`, there is a positive constant `c_a` such that `π_a(x) ≥ c_a x` for all `x ≥ |a|`." (The absolute-value
+   bars are drawn with Symbol-font glyphs, so plain text extraction drops them; we read them from the PDF content
+   stream.) **The Lean statement matches exactly.** The same definition of `π_a(x)` appears in Lagarias's summary of the
+   published paper (annotated bibliography, arXiv:math/0309224, entry Applegate–Lagarias 1995a).
 7. **Integrity of the vendored sources.** The public ProofAtlas source archive
    (`positive-density-log-time-collatz-v2.1-source.zip`) has the published SHA-256 (`23f5cac4…69c1f`). The **377**
    supporting files in the repository are byte-identical to the ones in that archive, and the **13** M2 Lean files match
@@ -57,8 +62,8 @@ passes a complete fresh-kernel replay **and an independent kernel (nanoda, writt
 same bug would have to be present in Lean's kernel and in nanoda. (In 2026 there was a claimed Lean proof about Collatz
 that exploited a Lean kernel bug, as recounted by L. Paulson on his blog, 30 July 2026.)
 
-Not covered yet: we have not read the verbatim wording of Conjecture A in the 1995 *Math. Comp.* paper (we still need
-to get hold of it), and we have not done a human reading of the mathematics of M2.
+Not covered yet: we have not done a human reading of the mathematics of M2. (Statement fidelity was checked against
+the 1993 preprint of Applegate–Lagarias; we have not seen the typeset *Math. Comp.* version.)
 
 **A notable consequence.** Taking `a = 1`, a positive proportion of all positive integers reach 1, verified in Lean. M2
 also implies, again verified, that if there is one counterexample then a positive proportion of integers are

@@ -2,3 +2,6 @@
 __pycache__/
 .DS_Store
 .claude/settings.local.json
+
+# Papers con copyright: sólo para lectura local, no se publican
+docs/applegateI.pdf
