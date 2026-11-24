@@ -127,7 +127,7 @@ pero no están verificados en Lean.)
   pasos son impares. El de arriba crece en los pasos impares. Una energía que solo mira ventanitas no puede
   saber que los pasos pares que vienen después van a compensar ese crecimiento.
 - **Energías globales, armadas con productos de matrices.** Estas ven el número entero de una vez, y son
-  la herramienta detrás del [enfoque de reescritura]({{ '/es/2026/11/23/collatz-as-a-rewriting-game-es/' | relative_url }}).
+  la herramienta detrás del [enfoque de reescritura]({{ '/es/2026/11/24/collatz-as-a-rewriting-game-es/' | relative_url }}).
   Con un solver SAT, no hay ninguna con matrices de hasta $$3 \times 3$$. Hay búsquedas más grandes corriendo.
 
 ## Un desvío: una prueba de 2011 que suponía su conclusión

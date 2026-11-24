@@ -124,7 +124,7 @@ but they are not checked in Lean.)
   decides which steps are odd. The top block grows on odd steps. An energy that only looks at small
   windows can't know that the even steps coming later will pay for that growth.
 - **Global energies, built from products of matrices.** These see the whole number at once, and they are
-  the tool behind the [rewriting approach]({{ '/2026/11/23/collatz-as-a-rewriting-game/' | relative_url }}).
+  the tool behind the [rewriting approach]({{ '/2026/11/24/collatz-as-a-rewriting-game/' | relative_url }}).
   With a SAT solver, there are none with matrices up to $$3 \times 3$$. Larger searches are running.
 
 ## A detour: a 2011 proof that assumed its conclusion
