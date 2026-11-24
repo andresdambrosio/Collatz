@@ -31,7 +31,7 @@ Everything is in [`Ideas/LAB.md`](https://github.com/andresdambrosio/Collatz/blo
 **atypical**: in the long run it can divide by 2 at most about $$\log_2 3 \approx 1.585$$ times per odd
 step on average (precisely: at most $$\log_2 3 + \varepsilon$$ for every $$\varepsilon > 0$$, from some
 point on), while a typical orbit divides by 2 twice. (For $$5n+1$$ it's the opposite: typical orbits grow.) And, as
-in the [previous post]({{ '/2026/11/23/cycles-need-15601-odd-steps/' | relative_url }}), a cycle needs
+in the [previous post]({{ '/2026/11/24/cycles-need-15601-odd-steps/' | relative_url }}), a cycle needs
 $$A/k$$ to be an extraordinarily good approximation of $$\log_2 3$$.
 
 ## What we tried
