@@ -29,7 +29,7 @@ seguido de un shift, cercano a los autómatas celulares. Script: `scripts/carry_
 | 0 | todo → 1 | 0 (el largo nunca crece) | 115 |
 | 1 | ciclos {1}, {0} | 0 | 0 |
 | 2 | 8 ciclos, sin divergencia | 6, 10, 18, 37, 73 (~0,46 L) | 0 |
-| 3 | ciclos {1,2}, {0} | 3, 4, 4, 4, 4 (¿artefacto de la definición?) | 0 |
+| 3 | ciclos {1,2}, {0} | 3, 4, 4, 4, 4 en la muestra; **no parece acotado**: ver "C_3 (24/11)" abajo | 0 |
 | 4 | ciclos {1,2}, {0}, uno de largo 14 desde 47 | ~0,55 L | 260 |
 | 6, 8, 12 | ciclos {1,2}, {0} | ~0,58 L (como ℤ) | 162–310 |
 | ∞ | todo → 1 | ~0,58 L (`2^L − 1`) | 305 |
@@ -143,7 +143,10 @@ la mitad de la conjetura. **No lo cubre Nashida**, cuya barrera es sobre orienta
 | Collatz | unsat: d = 1 (B ≤ 4), d = 2 (B ≤ 2) | unsat: d = 2 (B ≤ 3) |
 
 ### Búsqueda SAT (CaDiCaL vía python-sat, `scripts/carry_srs_sat.py`) y núcleos insatisfacibles
-- C_2 ártico: UNSAT en d = 3 con B ≤ 6 (7 min). d = 4 (B = 3, 5) y d = 5 (B = 3, 5): **sin respuesta** en 20 min.
+- C_2 ártico: UNSAT en d = 3 con B ≤ 6 (7 min) y **UNSAT en d = 4 con B = 3** (2 h, 0,4 GB; corrida del 24/11).
+  d = 5 (B = 3): **sin decidir** tras 3 h (corte por tiempo, 1 GB). Relanzado el 24/11 como cube and conquer
+  (`scripts/run_cubes.sh`, 9 casos según M_0[0][0], M_1[0][0] ∈ {1,2,3}, ruptura de simetría): 5 casos UNSAT en
+  segundos (los que tienen algún peso 3); (1,1), (1,2), (2,1), (2,2) **sin decidir en 8 h** con CaDiCaL 1.5.3 y 1.9.5. Con tope de 20 min, d = 4 (B = 5), d = 5 (B = 3, 5) y d = 6–8: sin respuesta.
 - **Núcleos mínimos** (qué reglas bastan para la contradicción): en d = 1, 4 reglas, que son exactamente el paso
   3 → 5 de C_2 (`11 → 101`, gana un bit). En d = 2 y 3, la maquinaria de cabezas del ciclo falso 3 → 5 → 6 → 3.
 - **C_2 tiene ciclos falsos de tamaño creciente** (máximo de bits 3, 6, 9, 11, 15, 18, 19, 20, 21… con arranques
@@ -152,3 +155,31 @@ la mitad de la conjetura. **No lo cubre Nashida**, cuya barrera es sobre orienta
   n ≥ 2^j. Collatz con j = 3, sin el ciclo trivial: sigue UNSAT en d ≤ 3. El núcleo en d = 1 es el paso
   7 → 11 (`111 → 1011`). La obstrucción no viene sólo de los ciclos: **cada paso de crecimiento de una órbita chica**
   tiene que pagarse con "crédito" que la cabeza trae, y en dimensión chica no alcanza.
+
+## C_3 (2026-11-24): certificados, potencial verdadero y un crecimiento que no parece acotado
+- **Certificados árticos para C_3:** UNSAT en d ≤ 3 (B = 3), también "bajo cero" (entradas ≥ −1, −2, −3;
+  `neg` en `carry_srs_sat.py`, con chequeo independiente del modelo) y congelando los números < 2^j, j ≤ 5.
+  d = 4 en curso. Controles: C_0 y C_1 dan SAT en todas las variantes. Los núcleos mínimos (d = 1) son pasos reales
+  de crecimiento de la familia `11…1` (1 → 2, 7 → 11, 31 → 47), no palabras mal formadas del SRS.
+- **Potencial verdadero** E(n) = (largo máximo futuro) − largo(n), n < 2^21. Clases de Myhill–Nerode (cota inferior de
+  estados de un autómata determinista que calcule E exacto, ventanas de 8 cifras): C_0, C_1: 1 clase; C_3: 1, 2, 4, 8,
+  15, 25, 44, 69, 104, 159, 244, 366, 532 (≈ ×1,5 por cifra, sin saturar); C_2: 2^p (todo prefijo distinto).
+- **Corrección:** el "crecimiento acotado" de C_3 era un artefacto de mirar números chicos (máximo 6 con n < 2^21, 5 con
+  muestras aleatorias de hasta 160 bits). Búsquedas dirigidas encuentran crecimiento cada vez mayor con prefijos más
+  largos: prefijos de 4, 11, 15, 16 cifras seguidos de una tira de unos dan 6, 9, 10, 11 (exhaustivo); búsqueda en haz:
+  13 (16 cifras), 15 (24), 17 (36), 19 (44 cifras + 80 unos; `1100111110011010111111110011111000110111…`).
+  Con un prefijo fijo el crecimiento satura (prefijo de 40 cifras: 5, 7, 11, 17, 19, 19, 19 con 10…640 unos), y
+  `2^R − 1` solo crece 1. Mecanismo: la tira de unos da muchos pasos impares seguidos, y en ese tiempo las cifras de
+  arriba evolucionan por el triplicado truncado `g(x) = x + 2x` (acarreos de vida ≤ 3), que en promedio crece menos que
+  ×2 (`largo(g^t(1)) − t`: 2, 4, −5, −7, −12, −18 para t = 10…60), pero para prefijos elegidos sostiene excedentes largos.
+- Una sobreaproximación finita de las cifras de arriba (ventana de b + 5 cifras con el estado de abajo enumerado
+  exacto) tiene ciclos de crecimiento positivo para b ≤ 8 (p. ej. `100 → 110 → 100`: dos pasos ×1,5): consistente con lo
+  anterior. **Lo que queda abierto:** si C_3 diverge o no (crecimiento no acotado pero, en lo visto, sublineal: 19 cifras
+  sobre 124) y a qué ritmo crece el máximo con el largo. Un certificado de largo acotado igual podría existir: sólo
+  exige largo ≤ peso inicial ≤ B·largo + c.
+- **Ritmo (cota inferior, búsqueda en haz sobre prefijo + tira de unos, `L` = largo total):** L = 16, 24, 32, 48, 64,
+  96, 128, 192, 256 → crecimiento ≥ 5, 6, 7, 9, 11, 15, 19, 22, 25. `g/L` baja (0,31 → 0,10), `g/log₂L` sube
+  (1,25 → 3,12) y `g/√L` se mantiene en 1,2–1,7: compatible con **crecimiento máximo ~ 1,5·√L** (sublineal, más rápido
+  que logarítmico). Heurística: durante la racha de pasos impares, el excedente de las cifras de arriba sobre ×2 hace algo
+  parecido a un paseo al azar sin deriva, cuya excursión típica en L pasos es ~√L. (En C_2 y en Collatz el excedente
+  tiene deriva positiva y el crecimiento es lineal.) Es una cota inferior: la búsqueda puede no encontrar los peores casos.

@@ -33,6 +33,8 @@ Proyecto Lake (Lean `v4.33.1` + Mathlib) para formalizar la conjetura de Collatz
   locales), `carry_srs*` (SRS + certificados de largo acotado; `carry_srs_sat.py` usa python-sat/CaDiCaL). Ver `Ideas/acarreos.md`.
 - `Ideas/LAB.md`: laboratorio de ideas hacia la prueba completa (protocolo, rondas, síntesis).
 - `docs/prior_art_rewriting.md`: prior art de la Fase 4 (Nashida 2026: barreras en Lean).
+- `docs/libro_collatz.md`: el recorrido completo del proyecto, en castellano, didáctico y autocontenido (mantenerlo al día).
+- `scripts/run_cubes.sh`: búsqueda SAT partida en casos (cube and conquer) con guardián de memoria; salida en `.sat_runs/` (ignorada).
 - `scripts/certs.py`: parser/chequeo de certificados de YAH; `scripts/srs.py`, `scripts/farkas_check.py`: chequeos numéricos.
 - `Collatz/Main.lean`: los dos objetivos abiertos (`sorry`) y `collatz_conjecture`.
 - `site/`: blog público (Jekyll, GitHub Pages, EN por defecto + ES en `site/es/`, emparejados por `ref:`).
