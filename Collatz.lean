@@ -11,4 +11,5 @@ import Collatz.Opfer
 import Collatz.Carries
 import Collatz.Conway
 import Collatz.KurtzSimon
+import Collatz.Forced.Certs
 import Collatz.Main

@@ -102,6 +102,13 @@ Es una mejora del resultado *formal*; la literatura (con verificación a 2⁷¹,
 - [x] Teorema 1 de Kurtz–Simon tal cual: `Conway.allReachOne_iff_total` (`c` total ⟺ toda órbita llega a 1),
       reducción computable desde la totalidad (Π₂-dureza). No formalizado: la clase Π₂ (no está en Mathlib).
 
+### Contexto — Clases forzadas (certificados de deriva) ✅ (2026-11-25)
+- [x] `Collatz.Forced.Cert.forced`: corrección de un certificado entero (niveles + potencial `x^M·2^Φ` + pines escalados)
+      para "toda órbita que no llega a 1 pasa por `A` mod `2^m`". Versión entera del Teorema A de rStation collatz_32.
+- [x] 24 clases verificadas en el kernel (`Collatz/Forced/Certs.lean`): las 10 de YAH mod 4/8, `{6}`, `{12}` mod 16 y la
+      "base" nueva de collatz_32 (`{9,15}`, `{11,15}` mod 16, `{27,28}` mod 32, nueve ternas mod 32).
+- [ ] Opcional: la familia `Bc_13` de collatz_32 (g = 13, 8192 nodos; ver si el kernel la aguanta).
+
 ### Fase 5 — Frente divergencia (`no_divergent_orbits`)
 - [x] Retrato de un contraejemplo (Forge): → ∞, densidad de impares ≤ log₂3, aperiódico,
       conjunto fino. Ver `docs/forge/known.md`. Lo que sigue es el muro.

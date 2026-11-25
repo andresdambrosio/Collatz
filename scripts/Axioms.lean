@@ -73,3 +73,9 @@ import Collatz
 #print axioms Conway.allReachOne_not_core
 #print axioms Conway.allReachOne_undecidable
 #print axioms Conway.allReachOne_iff_total
+-- Clases forzadas (certificados de deriva, rStation collatz_32)
+#print axioms Collatz.Forced.Cert.forced
+#print axioms Collatz.Forced.forced_mod16_9_15
+#print axioms Collatz.Forced.forced_mod16_11_15
+#print axioms Collatz.Forced.forced_mod32_27_28
+#print axioms Collatz.Forced.forced_mod32_7_25_30

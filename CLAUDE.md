@@ -38,6 +38,9 @@ Proyecto Lake (Lean `v4.33.1` + Mathlib) para formalizar la conjetura de Collatz
   (`c` total ⟺ toda órbita llega a 1). Usa `Conway/Mortal.lean` (programas con
   bucles `for` salen de su código desde cualquier configuración), `Conway/Outer.lean` (bucle externo
   `while F(m,x) ≠ 0`) y `Conway/Affine.lean` (función afín `kstep`: FRACTRAN + limpieza + `n ↦ (n+1)/2`).
+- `Collatz/Forced.lean` + `Collatz/Forced/Certs.lean` (**generado** por `python3 scripts/drift_cert.py --lean`):
+  clases de residuos forzadas (toda órbita que no llega a 1 pasa por `A` mod `2^m`), certificado entero de deriva y pines
+  (versión entera del Teorema A de rStation collatz_32), `Cert.forced` y 24 instancias verificadas con `decide +kernel`.
 - `Collatz/Carries.lean`: con cualquier regla de acarreo, el paso `n + 2n + 1` es inyectivo sobre las últimas m cifras.
 - `scripts/carry_*.py`: escalera de acarreos `C_k` (ronda 6): `carry_trunc` (mapa), `carry_potential*` (LP de potenciales
   locales), `carry_srs*` (SRS + certificados de largo acotado; `carry_srs_sat.py` usa python-sat/CaDiCaL). Ver `Ideas/acarreos.md`.

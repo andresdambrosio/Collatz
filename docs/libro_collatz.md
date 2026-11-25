@@ -399,6 +399,38 @@ sería una demostración de Collatz.
 - **[Experimento]** Probamos también matrices con entradas racionales (fuera del alcance de Nashida): nada en las
   cotas que buscamos.
 
+### Clases por las que toda órbita mala tiene que pasar
+
+Yolcu, Aaronson y Heule usaron la reescritura para probar enunciados parciales del tipo "toda órbita que no llega a
+1 pasa por un número que deja resto 2 al dividirlo por 8". Se dice que esa clase está **forzada**. Dejaron abiertas
+cuatro clases módulo 8: {1}, {5}, {7} y {5, 7}. Si se probara {5, 7}, por ejemplo, alcanzaría con estudiar los
+números que dejan resto 5 o 7.
+
+Un paper de rStation (collatz_32, 2026) da un certificado más simple que la reescritura:
+
+- se dibuja el **grafo de residuos** módulo $2^g$: a dónde puede ir el resto de un número en un paso;
+- en las partes del grafo con muchos caminos, una "energía" $\log_2 x + \Phi(\text{resto})$ que baja en cada paso;
+- en las partes que son un solo ciclo, un "pin": el único número 2-ádico que da vueltas por ese ciclo. Si el pin no
+  es un entero positivo, ningún entero puede quedarse ahí para siempre.
+
+- **[Lean]** Formalizamos una versión **entera** de ese certificado y probamos que es correcta
+  (`Collatz.Forced.Cert.forced`, `Collatz/Forced.lean`):
+  - la energía pasa a ser $x^M \cdot 2^{\Phi}$, que se divide por 2 en cada paso, cosa imposible para siempre;
+  - el pin pasa a ser un entero $D \cdot x - P$ que se multiplica por 3 o se divide por 2, así que tiene que ser 0;
+  - los números chicos los cubre la verificación de Forge hasta 600 000.
+- **[Lean]** Con certificados generados por `scripts/drift_cert.py`, el kernel verifica 24 clases forzadas
+  (`Collatz/Forced/Certs.lean`): las diez de Yolcu–Aaronson–Heule módulo 4 y 8 (otra prueba independiente de las
+  mismas), {6} y {12} módulo 16, y las clases que collatz_32 presenta como no derivables de lo anterior:
+  - {9, 15} y {11, 15} módulo 16;
+  - {27, 28} módulo 32;
+  - nueve ternas módulo 32, como {7, 25, 30}.
+
+  Por ejemplo: *toda órbita que no llega a 1 pasa por un número que deja resto 9 o 15 al dividirlo por 16*.
+- **[Literatura]** Esas clases las encontró collatz_32 (no arbitrado). Lo nuestro es la verificación formal. Las
+  cuatro clases abiertas siguen abiertas: el mismo paper prueba que estos certificados no pueden con ellas, en
+  ninguna resolución, por la "barrera de signo" de los ciclos negativos
+  (`docs/prior_art_rstation.md`). Nuestro certificador lo confirma: falla en las cuatro.
+
 ## Capítulo 7b. Conway: no hay un método general
 
 ### El enunciado
