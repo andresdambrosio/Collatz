@@ -58,3 +58,10 @@ import Collatz
 #print axioms Collatz.Opfer.collatz_of_theorem_4_17
 #print axioms Collatz.Carries.out_injective_below
 #print axioms Collatz.Carries.stepC_injective_below
+-- Indecidibilidad de Conway (1972)
+#print axioms Conway.computes_of_partrec'
+#print axioms Conway.Prog.toMachine_halts
+#print axioms Conway.orbit
+#print axioms Conway.conway_undecidable_fixed
+#print axioms Conway.conway_undecidable
+#print axioms Conway.conway_undecidable_one

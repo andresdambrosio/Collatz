@@ -90,6 +90,13 @@ Cota según `M` (mínimo `k` con `0 < A − k·log₂3 ≤ k·log₂(1 + 1/(3M))
 - [ ] Siguiente salto: `M ≈ 2,9·10⁸` da `k ≥ 47 468` (3,5× más cómputo); `M ≈ 1,5·10⁹` da `79 335`
 Es una mejora del resultado *formal*; la literatura (con verificación a 2⁷¹, no formal) tiene ≥ 1,1·10¹¹.
 
+### Contexto — Indecidibilidad de Conway ✅ (2026-11-25)
+- [x] `Conway.conway_undecidable_fixed`: existe una función de Collatz generalizada multiplicativa fija
+      (`g(n) = a_{n mod D}·n`, `a_j ∈ ℚ`) cuyo problema "¿alguna iteración de `2^m` es potencia de 2 / vale 1?"
+      no es computable; `Conway.conway_undecidable(_one)`: idem con `(D, tabla, n)` como dato.
+      Teorema de Conway (1972); lo nuestro es sólo la verificación formal (hay versión en Coq de FRACTRAN).
+- [ ] Opcional: versión Π₂ "¿toda órbita llega a 1?" (Kurtz–Simon 2007), que necesita otra reducción.
+
 ### Fase 5 — Frente divergencia (`no_divergent_orbits`)
 - [x] Retrato de un contraejemplo (Forge): → ∞, densidad de impares ≤ log₂3, aperiódico,
       conjunto fino. Ver `docs/forge/known.md`. Lo que sigue es el muro.

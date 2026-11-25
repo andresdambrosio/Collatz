@@ -28,6 +28,11 @@ Proyecto Lake (Lean `v4.33.1` + Mathlib) para formalizar la conjetura de Collatz
 - `scripts/neighbors.py`, `neighbor_matrix.py`, `neighbor_classes.py`: vecinos de `𝒯` y filtro de clases de certificados con z3 (`pip install --user z3-solver`).
 - `scripts/labelled_neighbors.py`, `labelled_search.py`: etiquetado semántico mod m de `𝒯` (laboratorio, ronda 3).
 - `Collatz/Opfer.lean`: el algoritmo de aniquilación de Opfer (2011) es el mapa de Collatz; `theorem_4_17_iff_collatz`.
+- `Collatz/Conway.lean` + `Collatz/Conway/`: indecidibilidad de Conway (1972), namespace `Conway`. Cadena:
+  `While.lean` (programas WHILE con registros, renombre, spec `Prog.Computes`) → `Compile.lean`
+  (`computes_of_partrec'`: toda `Nat.Partrec'` se compila) → `Minsky.lean` (`Prog.toMachine_halts`) →
+  `Fractran.lean` (codificación en primos, `orbit`) → `Conway.lean` (`conway_undecidable_fixed`,
+  `conway_undecidable`, `conway_undecidable_one`; reducción desde `ComputablePred.halting_problem`).
 - `Collatz/Carries.lean`: con cualquier regla de acarreo, el paso `n + 2n + 1` es inyectivo sobre las últimas m cifras.
 - `scripts/carry_*.py`: escalera de acarreos `C_k` (ronda 6): `carry_trunc` (mapa), `carry_potential*` (LP de potenciales
   locales), `carry_srs*` (SRS + certificados de largo acotado; `carry_srs_sat.py` usa python-sat/CaDiCaL). Ver `Ideas/acarreos.md`.

@@ -9,4 +9,5 @@ import Collatz.Rewriting.Neighbors
 import Collatz.CycleBound.Final
 import Collatz.Opfer
 import Collatz.Carries
+import Collatz.Conway
 import Collatz.Main

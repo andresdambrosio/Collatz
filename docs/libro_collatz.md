@@ -76,10 +76,12 @@ verificado en Lean, ver el capítulo 5).
   tiende a 100 %) en algún momento bajan por debajo de su valor inicial.
 - **[Literatura]** Tao (2019) probó algo mucho más fuerte: casi todos los números llegan a valores "casi acotados".
   Sigue siendo un "casi todos", y él mismo dice que pasar a "todos" es tan difícil como la conjetura.
-- **[Literatura]** Conway (1972) mostró que si se generaliza el juego (otras reglas según el resto al dividir por
-  un número fijo), la pregunta "¿todo llega a 1?" se vuelve **indecidible**: no existe ningún algoritmo general
-  que la conteste. Eso no dice que Collatz sea indecidible, pero sí que no hay un método universal: cualquier
-  prueba tiene que usar algo propio de "3n + 1".
+- **[Lean]** Conway (1972) mostró que si se generaliza el juego (otras reglas según el resto al dividir por
+  un número fijo), la pregunta "¿este número llega a una potencia de 2?" se vuelve **indecidible**: no existe
+  ningún algoritmo general que la conteste. Lo verificamos en Lean (capítulo 7b). La versión "¿*todo* número
+  llega a 1?" también es indecidible **[Literatura]** (Kurtz y Simon, 2007), pero esa no la formalizamos. Nada de
+  esto dice que Collatz sea indecidible, pero sí que no hay un método universal: cualquier prueba tiene que usar
+  algo propio de "3n + 1".
 
 > **Para pensar.** ¿Por qué la verificación hasta $2^{71}$, por enorme que sea, no prueba nada?
 > (Respuesta: porque un contraejemplo podría ser mayor; además, como veremos, un número que no llega a 1
@@ -395,6 +397,57 @@ sería una demostración de Collatz.
   "ver" la diferencia entre la cifra 2 y la cifra 1 en esa única regla. Es la versión fina del filtro de 5n + 1.
 - **[Experimento]** Probamos también matrices con entradas racionales (fuera del alcance de Nashida): nada en las
   cotas que buscamos.
+
+## Capítulo 7b. Conway: no hay un método general
+
+### El enunciado
+
+Una **función de Collatz generalizada multiplicativa** elige un número $D$ y, para cada resto $j$ al dividir
+por $D$, una fracción $a_j$; después manda $n \mapsto a_j \cdot n$ cuando $n$ deja resto $j$ (las fracciones
+están elegidas para que el resultado sea siempre entero). Collatz es parecido, pero no es exactamente de esta
+familia: $3n + 1$ suma un 1, no sólo multiplica.
+
+- **[Lean]** Hay una función así, **fija**, para la que ningún algoritmo decide, dado $m$, si alguna iteración
+  de $2^m$ (al menos un paso) es una potencia de 2 (`Conway.conway_undecidable_fixed`). Lo mismo para "alguna
+  iteración vale 1". Y por lo tanto tampoco hay algoritmo para el problema con la función como dato
+  (`Conway.conway_undecidable`, `Conway.conway_undecidable_one`). Es el teorema de Conway (1972, *Unpredictable
+  iterations*), en la forma en que lo citan Kurtz y Simon (2007).
+
+### Cómo se prueba (la cadena)
+
+La idea es que estas funciones pueden **simular una computadora**. Si pudiéramos predecir sus órbitas,
+podríamos resolver el problema de la detención, que Turing probó imposible. La cadena, eslabón por eslabón:
+
+1. **Problema de la detención** (ya está en Mathlib): no se puede decidir si un programa termina con entrada 0.
+   Lo empaquetamos en una sola función universal $U(m)$ = "correr el programa número $m$".
+2. **De funciones recursivas a programas WHILE** (`Collatz/Conway/Compile.lean`). Mathlib describe las funciones
+   computables con siete reglas (cero, sucesor, proyección, composición, recursión primitiva, búsqueda del
+   primer cero). Para cada regla escribimos un programa con registros que sólo sabe sumar 1, restar 1 y repetir
+   "mientras el registro no sea cero", y probamos que termina exactamente cuando la función está definida.
+3. **De WHILE a máquinas de Minsky** (`Collatz/Conway/Minsky.lean`): una lista de instrucciones "sumá 1 y saltá" y
+   "si es cero saltá acá, si no restá 1 y saltá allá". La máquina se detiene sii el programa termina.
+4. **De Minsky a FRACTRAN** (`Collatz/Conway/Fractran.lean`). El truco de Conway: guardar todos los registros en
+   **un solo número**, como exponentes de primos ($2^{r_0} \cdot 3^{r_1} \cdot 5^{r_2} \cdots$), y el
+   estado de la máquina en un primo más. Cada instrucción es una fracción: multiplicar por $3 \cdot 11/7$
+   significa "estando en el estado 7, sumá 1 al registro del 3 y pasá al estado 11". Dividir por un primo sólo se
+   puede si el primo está, y eso es justo la pregunta "¿el registro es distinto de cero?".
+5. **De FRACTRAN a Collatz generalizado** (`Collatz/Conway.lean`): qué fracción se aplica depende sólo del resto
+   de $n$ al dividir por el producto de los denominadores. Eso es exactamente una función de la familia.
+
+Al final, la órbita de $2^m$ toca una potencia de 2 sii el programa número $m$ termina. Si hubiera un
+algoritmo para lo primero, lo habría para lo segundo.
+
+### Qué es nuestro y qué no
+
+- El teorema es de Conway (1972); la técnica es la estándar. Lo nuestro es **sólo la verificación formal**.
+- **[Literatura]** Ya existe una formalización en Coq de la indecidibilidad de FRACTRAN (Larchey-Wendling y
+  Forster, en la *Coq Library of Undecidability Proofs*, usada para el décimo problema de Hilbert). En una
+  búsqueda rápida no encontramos una en Lean, pero no lo descartamos.
+- La función fija se construye pero no la escribimos: tiene una cantidad enorme de restos. Interesa que existe.
+
+> **Para pensar.** ¿Por qué esto no prueba que Collatz sea indecidible? (Respuesta: porque habla de *la
+> familia*; para una función particular, como $3n+1$, puede haber una prueba que use sus propiedades. Lo que sí
+> dice es que una prueba de Collatz no puede ser un método que sirva para todas.)
 
 ---
 
@@ -835,6 +888,9 @@ positiva).
 - D. Applegate, J. Lagarias, *Math. Comp.* 64 (1995), doi:10.1090/S0025-5718-1995-1270612-0.
 - N. El Jaouhari, ConjectureA (Lean), github.com/neljaouh/ConjectureA, Zenodo 23025918.
 - C. Chang, arXiv:2603.11066 (2026).
+- J. H. Conway, "Unpredictable iterations", *Proc. 1972 Number Theory Conf.*, Univ. of Colorado, Boulder (1972) 49–52.
+- S. A. Kurtz, J. Simon, "The undecidability of the generalized Collatz problem", *TAMC 2007*, LNCS 4484, 542–553.
+- D. Larchey-Wendling, Y. Forster, "Hilbert's Tenth Problem in Coq", *FSCD 2019* (extendida: arXiv:2003.04604).
 
 ## C. Mapa del repositorio
 
@@ -844,6 +900,7 @@ positiva).
 | `Collatz/Forge/`, `Collatz/Bridge.lean` | 5 |
 | `Collatz/CycleBound.lean`, `Collatz/CycleBound/` | 6 |
 | `Collatz/Rewriting.lean`, `Collatz/Rewriting/` | 7 |
+| `Collatz/Conway.lean`, `Collatz/Conway/` | 7b |
 | `Ideas/LAB.md` | 8, 9 |
 | `Ideas/acarreos.md`, `Collatz/Carries.lean`, `scripts/carry_*.py`, `scripts/run_cubes.sh` | 10 |
 | `Ideas/berg_meinardus.md`, `Collatz/Opfer.lean` | 11 |
