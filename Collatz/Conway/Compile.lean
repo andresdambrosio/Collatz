@@ -17,6 +17,10 @@ def seqUpTo : ℕ → (ℕ → Prog) → Prog
   | 0, _ => .skip
   | k + 1, Q => .seq (seqUpTo k Q) (Q k)
 
+theorem mortal_seqUpTo {Q : ℕ → Prog} (h : ∀ j, (Q j).Mortal) : ∀ k, (seqUpTo k Q).Mortal
+  | 0 => .skip
+  | k + 1 => .seq (mortal_seqUpTo h k) (h k)
+
 theorem computes_of_total {n : ℕ} {f : List.Vector ℕ n → ℕ} {P : Prog} (N : ℕ)
     (h : ∀ (v : List.Vector ℕ n) (s : Regs), (∀ i : Fin n, s i = v.get i) →
       (∀ r, n ≤ r → r < N → s r = 0) → Runs P s (update s n (f v))) :
@@ -88,11 +92,22 @@ def compG (m n : ℕ) (Pg : Fin n → Prog) (i : ℕ) : Prog :=
 
 theorem computes_comp {m n : ℕ} {f : List.Vector ℕ n →. ℕ} {g : Fin n → List.Vector ℕ m →. ℕ}
     {Pf : Prog} (hf : Computes n f Pf) (Pg : Fin n → Prog) (hg : ∀ i, Computes m (g i) (Pg i)) :
-    ∃ P, Computes m (fun v => (List.Vector.mOfFn fun i => g i v) >>= f) P := by
+    ∃ P, Computes m (fun v => (List.Vector.mOfFn fun i => g i v) >>= f) P ∧
+      (Pf.Mortal → (∀ i, (Pg i).Mortal) → P.Mortal) := by
   obtain ⟨Nf, hNf⟩ := hf.call
   choose Ng hNg using fun i => (hg i).call
   refine ⟨.seq (seqUpTo n (compG m n Pg)) (.seq (Pf.rename (callMap n (fun j => m + 1 + j) m
-    (m + n + 1))) (seqUpTo n fun j => clear (m + 1 + j))), m + n + 1 + Nf + ∑ i, Ng i, ?_⟩
+    (m + n + 1))) (seqUpTo n fun j => clear (m + 1 + j))), ⟨m + n + 1 + Nf + ∑ i, Ng i, ?_⟩,
+    fun hmf hmg => ?_⟩
+  swap
+  · refine .seq (mortal_seqUpTo (fun j => ?_) n) (.seq (hmf.rename (callMap_injective
+      (by intro i j _ _ h; omega) (by intro i _; omega) (by omega) (by intro i _; omega)))
+      (mortal_seqUpTo (fun j => .clear _) n))
+    unfold compG
+    split_ifs
+    · exact (hmg _).rename (callMap_injective (by intro i j _ _ h; exact h)
+        (by intro i hi; simp; omega) (by omega) (by intro i _; simp; omega))
+    · exact .skip
   intro v s hin hz s'
   have hNle : ∀ i, Ng i ≤ ∑ i, Ng i := fun i =>
     Finset.single_le_sum (fun i _ => Nat.zero_le (Ng i)) (Finset.mem_univ i)
@@ -186,14 +201,29 @@ theorem computes_prec {n : ℕ} {f : List.Vector ℕ n → ℕ} {g : List.Vector
     {Pf Pg : Prog} (hf : Computes n (f : _ →. ℕ) Pf) (hg : Computes (n + 2) (g : _ →. ℕ) Pg) :
     ∃ P, Computes (n + 1) ((fun v : List.Vector ℕ (n + 1) =>
       v.head.rec (f v.tail) fun y IH => g (y ::ᵥ IH ::ᵥ v.tail) : List.Vector ℕ (n + 1) → ℕ) :
-        _ →. ℕ) P := by
+        _ →. ℕ) P ∧ (Pf.Mortal → Pg.Mortal → P.Mortal) := by
   obtain ⟨Nf, hNf⟩ := hf.call
   obtain ⟨Ng, hNg⟩ := hg.call
   -- registros: salida n+1, Y = n+2, Z = n+3, C = n+4, T = n+5, auxiliares desde H = n+6
   let body : Prog := .seq (.dec (n + 4)) (.seq (Pg.rename (callMap (n + 2) (precInp n) (n + 3)
     (n + 6))) (.seq (clear (n + 1)) (.seq (moveAdd (n + 3) (n + 1)) (.inc (n + 2)))))
   refine ⟨.seq (Pf.rename (callMap n (fun i => i + 1) (n + 1) (n + 6)))
-    (.seq (copy 0 (n + 4) (n + 5)) (.seq (.loop (n + 4) body) (clear (n + 2)))), ?_⟩
+    (.seq (copy 0 (n + 4) (n + 5)) (.seq (.loop (n + 4) body) (clear (n + 2)))), ?_,
+    fun hmf hmg => ?_⟩
+  swap
+  · refine .seq (hmf.rename (callMap_injective (by intro i j _ _ h; omega) (by intro i _; omega)
+      (by omega) (by intro i _; omega))) (.seq (mortal_copy (by omega) (by omega) (by omega))
+      (.seq (.forLoop (.seq (hmg.rename ?_) (.seq (.clear _) (.seq (mortal_moveAdd (by omega))
+      (.inc _)))) ?_) (.clear _)))
+    · exact callMap_injective
+        (by intro i j hi hj h; simp only [precInp] at h; split_ifs at h <;> omega)
+        (by intro i hi; simp only [precInp]; split_ifs <;> omega) (by omega)
+        (by intro i hi; simp only [precInp]; split_ifs <;> omega)
+    · intro h
+      rcases h with h | h
+      · obtain ⟨r, -, hr⟩ := uses_rename h
+        simp only [callMap, precInp] at hr; split_ifs at hr <;> omega
+      · simp only [Prog.Uses] at h; omega
   refine computes_of_total (n + 6 + Nf + Ng) fun v s hin hz => ?_
   have hin0 : s 0 = v.head := by simpa using hin 0
   have hinS : ∀ i : Fin n, s (i + 1) = v.tail.get i := by
@@ -372,16 +402,16 @@ theorem computes_rfind {n : ℕ} {f : List.Vector ℕ (n + 1) → ℕ} {Pf : Pro
 /-! ## Teorema de compilación -/
 
 theorem computes_of_primrec' {n : ℕ} {f : List.Vector ℕ n → ℕ} (hf : Nat.Primrec' f) :
-    ∃ P, Computes n (f : _ →. ℕ) P := by
+    ∃ P, Computes n (f : _ →. ℕ) P ∧ P.Mortal := by
   induction hf with
-  | zero => exact ⟨_, computes_zero⟩
-  | succ => exact ⟨_, computes_succ⟩
-  | get i => exact ⟨_, computes_get i⟩
+  | zero => exact ⟨_, computes_zero, .skip⟩
+  | succ => exact ⟨_, computes_succ, .seq (mortal_copy (by omega) (by omega) (by omega)) (.inc _)⟩
+  | get i => exact ⟨_, computes_get i, mortal_copy (by omega) (by omega) (by omega)⟩
   | @comp m n f g _ _ ihf ihg =>
-    obtain ⟨Pf, hPf⟩ := ihf
-    choose Pg hPg using ihg
-    obtain ⟨P, hP⟩ := computes_comp hPf Pg hPg
-    refine ⟨P, ?_⟩
+    obtain ⟨Pf, hPf, hmf⟩ := ihf
+    choose Pg hPg hmg using ihg
+    obtain ⟨P, hP, hm⟩ := computes_comp hPf Pg hPg
+    refine ⟨P, ?_, hm hmf hmg⟩
     have e : ((fun a => f (List.Vector.ofFn fun i => g i a) : List.Vector ℕ m → ℕ) : List.Vector ℕ m →. ℕ) =
         fun v => (List.Vector.mOfFn fun i => ((g i : List.Vector ℕ m → ℕ) : List.Vector ℕ m →. ℕ) v) >>=
           (f : List.Vector ℕ n →. ℕ) := by
@@ -390,19 +420,20 @@ theorem computes_of_primrec' {n : ℕ} {f : List.Vector ℕ n → ℕ} (hf : Nat
       exact (Part.bind_some _ _).symm
     rw [e]; exact hP
   | prec _ _ ihf ihg =>
-    obtain ⟨Pf, hPf⟩ := ihf
-    obtain ⟨Pg, hPg⟩ := ihg
-    exact computes_prec hPf hPg
+    obtain ⟨Pf, hPf, hmf⟩ := ihf
+    obtain ⟨Pg, hPg, hmg⟩ := ihg
+    obtain ⟨P, hP, hm⟩ := computes_prec hPf hPg
+    exact ⟨P, hP, hm hmf hmg⟩
 
 /-- **Toda función parcial recursiva (base `Nat.Partrec'`) se calcula con un programa WHILE.** -/
 theorem computes_of_partrec' {n : ℕ} {f : List.Vector ℕ n →. ℕ} (hf : Nat.Partrec' f) :
     ∃ P, Computes n f P := by
   induction hf with
-  | prim hf => exact computes_of_primrec' hf
+  | prim hf => exact (computes_of_primrec' hf).imp fun _ h => h.1
   | comp g _ _ ihf ihg =>
     obtain ⟨Pf, hPf⟩ := ihf
     choose Pg hPg using ihg
-    exact computes_comp hPf Pg hPg
+    exact (computes_comp hPf Pg hPg).imp fun _ h => h.1
   | rfind _ ihf =>
     obtain ⟨Pf, hPf⟩ := ihf
     exact computes_rfind hPf

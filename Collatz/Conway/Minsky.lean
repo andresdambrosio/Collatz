@@ -19,6 +19,7 @@ open Function
 inductive Instr
   | inc (r j : ℕ)
   | decjz (r j k : ℕ)
+  | addc (r k j : ℕ)
 
 /-- Una máquina de Minsky. -/
 abbrev Machine := List Instr
@@ -34,6 +35,7 @@ namespace Instr
 def exec : Instr → Regs → Cfg
   | inc r j, s => ⟨j, update s r (s r + 1)⟩
   | decjz r j k, s => if s r = 0 then ⟨k, s⟩ else ⟨j, update s r (s r - 1)⟩
+  | addc r k j, s => ⟨j, update s r (s r + k)⟩
 
 end Instr
 
@@ -100,6 +102,7 @@ def len : Prog → ℕ
   | skip => 0
   | inc _ => 1
   | dec _ => 1
+  | addc _ _ => 1
   | seq p q => len p + len q
   | loop _ p => len p + 4
 
@@ -111,6 +114,7 @@ def compile (b : ℕ) : Prog → List Instr
   | skip => []
   | inc r => [.inc r (b + 1)]
   | dec r => [.decjz r (b + 1) (b + 1)]
+  | addc r k => [.addc r k (b + 1)]
   | seq p q => compile b p ++ compile (b + len p) q
   | loop r p => [.decjz r (b + 1) (b + len p + 4)] ++ [.inc r (b + 2)] ++ compile (b + 2) p ++
       [.inc r (b + len p + 3)] ++ [.decjz r b b]
@@ -119,6 +123,7 @@ theorem length_compile : ∀ (b : ℕ) (p : Prog), (compile b p).length = len p
   | _, skip => rfl
   | _, inc _ => rfl
   | _, dec _ => rfl
+  | _, addc _ _ => rfl
   | b, seq p q => by simp [compile, len, length_compile]
   | b, loop r p => by simp [compile, len, length_compile]
 
@@ -156,6 +161,9 @@ theorem runs_compile {p : Prog} {s s' : Regs} (h : Runs p s s') :
   | dec r s =>
     intro M b hc
     exact ⟨1, by simp [step_at hc.single, exec_decjz_same, len]⟩
+  | addc r k s =>
+    intro M b hc
+    exact ⟨1, by simp [step_at hc.single, Instr.exec, len]⟩
   | @seq p q s t u _ _ ih1 ih2 =>
     intro M b hc
     obtain ⟨k1, h1⟩ := ih1 M b hc.left
@@ -201,6 +209,11 @@ theorem halts_compile : ∀ (p : Prog) (M : Machine) (b : ℕ), M.CodeAt b (comp
     have hpos : 0 < n := lt_of_halted hn (m := 0) (by
       simp only [iterate_zero, id, Halted, not_le]; exact (List.getElem?_eq_some_iff.1 h0).1)
     exact ⟨_, 1, .dec r s, hpos, by simp [step_at h0, exec_decjz_same, len]⟩
+  | addc r k, M, b, hc, n, s, hn => by
+    have h0 := hc.single
+    have hpos : 0 < n := lt_of_halted hn (m := 0) (by
+      simp only [iterate_zero, id, Halted, not_le]; exact (List.getElem?_eq_some_iff.1 h0).1)
+    exact ⟨_, 1, .addc r k s, hpos, by simp [step_at h0, Instr.exec, len]⟩
   | seq p q, M, b, hc, n, s, hn => by
     obtain ⟨t, k1, h1, hk1, e1⟩ := halts_compile p M b hc.left n s hn
     have hc2 := hc.right

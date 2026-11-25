@@ -65,3 +65,10 @@ import Collatz
 #print axioms Conway.conway_undecidable_fixed
 #print axioms Conway.conway_undecidable
 #print axioms Conway.conway_undecidable_one
+-- Kurtz–Simon (2007): "¿toda órbita llega a 1?" no es r.e. ni co-r.e.
+#print axioms Conway.Prog.exits_compile
+#print axioms Conway.allOne_of_mortal
+#print axioms Conway.ks_reduction
+#print axioms Conway.allReachOne_not_re
+#print axioms Conway.allReachOne_not_core
+#print axioms Conway.allReachOne_undecidable

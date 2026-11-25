@@ -78,8 +78,9 @@ verificado en Lean, ver el capítulo 5).
   Sigue siendo un "casi todos", y él mismo dice que pasar a "todos" es tan difícil como la conjetura.
 - **[Lean]** Conway (1972) mostró que si se generaliza el juego (otras reglas según el resto al dividir por
   un número fijo), la pregunta "¿este número llega a una potencia de 2?" se vuelve **indecidible**: no existe
-  ningún algoritmo general que la conteste. Lo verificamos en Lean (capítulo 7b). La versión "¿*todo* número
-  llega a 1?" también es indecidible **[Literatura]** (Kurtz y Simon, 2007), pero esa no la formalizamos. Nada de
+  ningún algoritmo general que la conteste. Lo verificamos en Lean (capítulo 7b). Kurtz y Simon (2007) probaron
+  que la versión "¿*todo* número llega a 1?" también es indecidible. Verificamos en Lean que no es ni
+  semidecidible ni co-semidecidible (capítulo 7b). Nada de
   esto dice que Collatz sea indecidible, pero sí que no hay un método universal: cualquier prueba tiene que usar
   algo propio de "3n + 1".
 
@@ -437,9 +438,46 @@ podríamos resolver el problema de la detención, que Turing probó imposible. L
 Al final, la órbita de $2^m$ toca una potencia de 2 sii el programa número $m$ termina. Si hubiera un
 algoritmo para lo primero, lo habría para lo segundo.
 
+### La versión "todo número llega a 1" (Kurtz y Simon)
+
+La pregunta de Collatz no es "¿*este* número llega?", sino "¿*todos* llegan?". Kurtz y Simon (2007) probaron que,
+para funciones de la familia **afín** ($n \mapsto a_j n + b_j$ según el resto $j$, como $3n+1$), esa pregunta es
+todavía más difícil: es $\Pi_2$-completa, el mismo nivel que "¿este programa termina con *toda* entrada?".
+
+- **[Lean]** El conjunto de funciones afines (dadas por $D$ y una tabla) para las que toda órbita llega a 1
+  **no es semidecidible** (`Conway.allReachOne_not_re`) y **su complemento tampoco**
+  (`Conway.allReachOne_not_core`). En particular, es indecidible (`Conway.allReachOne_undecidable`). Debajo de
+  ambos está `Conway.ks_reduction`. Para toda $F$ recursiva primitiva arma, de forma computable, funciones afines
+  genuinas en las que toda órbita llega a 1 sii $\forall x\, \exists x' \ge x,\ F(m, x') = 0$. Esa es
+  exactamente la forma $\Pi_2$.
+- **[Literatura]** Que *todo* problema $\Pi_2$ se reduzca a este (la completitud propiamente dicha) agrega la
+  forma normal de Kleene; esa parte no la formalizamos.
+
+Lo nuevo respecto de Conway es que ahora hay que controlar **todos** los números, no sólo los que codifican una
+computación prolija. Tres ideas lo resuelven:
+
+1. **La basura viaja intacta.** Todo $n$ se escribe como (primos de la máquina) × $u$, con $u$ sin primos de la
+   máquina. Las fracciones sólo miran los primos de la máquina, así que $u$ no cambia. Cuando no queda ningún
+   primo de la máquina, se aplica la regla afín $n \mapsto (n+1)/2$, que achica estrictamente a $u$. Por eso
+   la basura se termina gastando (`Collatz/Conway/Affine.lean`).
+2. **Configuraciones rotas.** Si hay dos estados a la vez, se borran de a pares. Si no hay estado, se borran los
+   registros. Lo que queda es una configuración cualquiera de la máquina, quizás a mitad de un cálculo, con
+   registros absurdos. Por eso la máquina tiene que detenerse **desde cualquier configuración** ("mortalidad"). Lo
+   garantizamos usando sólo bucles `for`, que siempre terminan aunque se empiece por la mitad
+   (`Collatz/Conway/Mortal.lean`).
+3. **Un bucle externo que se corrige solo** (`Collatz/Conway/Outer.lean`): `mientras F(m, x) ≠ 0: x := x + 1`.
+   Cada vuelta limpia los registros y recarga $m$ con una sola instrucción "sumá $m$". Así $m$ queda en la tabla
+   (como un factor $2^m$ en dos fracciones) y no en un registro que la basura podría ensuciar. Si arrancamos a
+   mitad de camino, a lo sumo la primera vuelta da cualquier cosa, y de ahí en más todo es correcto.
+
+Con $F(m,x)$ = "el programa $m$ ya se detuvo a los $x$ pasos" sale que el conjunto no es semidecidible. Con su
+negación sale que el complemento tampoco lo es (`Collatz/KurtzSimon.lean`).
+
 ### Qué es nuestro y qué no
 
-- El teorema es de Conway (1972); la técnica es la estándar. Lo nuestro es **sólo la verificación formal**.
+- Los teoremas son de Conway (1972) y de Kurtz y Simon (2007); la construcción para "todo número" la armamos
+  nosotros siguiendo esa idea (no tuvimos el paper a mano). Lo nuestro es **la verificación formal**. En una
+  búsqueda no encontramos una formalización previa de Kurtz–Simon en ningún asistente de pruebas.
 - **[Literatura]** Ya existe una formalización en Coq de la indecidibilidad de FRACTRAN (Larchey-Wendling y
   Forster, en la *Coq Library of Undecidability Proofs*, usada para el décimo problema de Hilbert). En una
   búsqueda rápida no encontramos una en Lean, pero no lo descartamos.

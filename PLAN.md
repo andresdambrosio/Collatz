@@ -95,7 +95,11 @@ Es una mejora del resultado *formal*; la literatura (con verificación a 2⁷¹,
       (`g(n) = a_{n mod D}·n`, `a_j ∈ ℚ`) cuyo problema "¿alguna iteración de `2^m` es potencia de 2 / vale 1?"
       no es computable; `Conway.conway_undecidable(_one)`: idem con `(D, tabla, n)` como dato.
       Teorema de Conway (1972); lo nuestro es sólo la verificación formal (hay versión en Coq de FRACTRAN).
-- [ ] Opcional: versión Π₂ "¿toda órbita llega a 1?" (Kurtz–Simon 2007), que necesita otra reducción.
+- [x] Kurtz–Simon (2007), "¿toda órbita llega a 1?" para funciones afines: `Conway.allReachOne_not_re` y
+      `Conway.allReachOne_not_core` (ni r.e. ni co-r.e.), `allReachOne_undecidable`, y la reducción genérica
+      `ks_reduction` (forma Π₂ `∀x ∃x' ≥ x, F(m,x') = 0` con `F` recursiva primitiva). `Collatz/KurtzSimon.lean`
+      + `Conway/Mortal.lean`, `Outer.lean`, `Affine.lean` (2026-11-25).
+- [ ] Opcional: Π₂-completitud propiamente dicha (reducir todo conjunto Π₂ vía forma normal de Kleene).
 
 ### Fase 5 — Frente divergencia (`no_divergent_orbits`)
 - [x] Retrato de un contraejemplo (Forge): → ∞, densidad de impares ≤ log₂3, aperiódico,

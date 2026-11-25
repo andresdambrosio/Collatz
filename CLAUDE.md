@@ -33,6 +33,10 @@ Proyecto Lake (Lean `v4.33.1` + Mathlib) para formalizar la conjetura de Collatz
   (`computes_of_partrec'`: toda `Nat.Partrec'` se compila) → `Minsky.lean` (`Prog.toMachine_halts`) →
   `Fractran.lean` (codificación en primos, `orbit`) → `Conway.lean` (`conway_undecidable_fixed`,
   `conway_undecidable`, `conway_undecidable_one`; reducción desde `ComputablePred.halting_problem`).
+- `Collatz/KurtzSimon.lean`: Kurtz–Simon (2007), "¿toda órbita llega a 1?" para funciones afines no es r.e. ni
+  co-r.e. (`allReachOne_not_re`, `allReachOne_not_core`, `ks_reduction`). Usa `Conway/Mortal.lean` (programas con
+  bucles `for` salen de su código desde cualquier configuración), `Conway/Outer.lean` (bucle externo
+  `while F(m,x) ≠ 0`) y `Conway/Affine.lean` (función afín `kstep`: FRACTRAN + limpieza + `n ↦ (n+1)/2`).
 - `Collatz/Carries.lean`: con cualquier regla de acarreo, el paso `n + 2n + 1` es inyectivo sobre las últimas m cifras.
 - `scripts/carry_*.py`: escalera de acarreos `C_k` (ronda 6): `carry_trunc` (mapa), `carry_potential*` (LP de potenciales
   locales), `carry_srs*` (SRS + certificados de largo acotado; `carry_srs_sat.py` usa python-sat/CaDiCaL). Ver `Ideas/acarreos.md`.

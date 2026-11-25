@@ -99,6 +99,11 @@ theorem body_inc {R r : ℕ} (hr : r < R) (e : Regs) :
   rw [body_split hr (update e r _), body_split hr e, update_idem, update_self]
   ring
 
+theorem body_add {R r : ℕ} (hr : r < R) (e : Regs) (k : ℕ) :
+    body R (update e r (e r + k)) = pr r ^ k * body R e := by
+  rw [body_split hr (update e r _), body_split hr e, update_idem, update_self]
+  ring
+
 theorem body_dec {R r : ℕ} (hr : r < R) (e : Regs) (h : e r ≠ 0) :
     body R e = pr r * body R (update e r (e r - 1)) := by
   rw [body_split hr (update e r _), body_split hr e, update_idem, update_self]
@@ -119,11 +124,13 @@ theorem st_dvd_enc {R i : ℕ} (c : Cfg) : pr (R + i) ∣ enc R c ↔ i = c.pc :
 def Instr.reg : Instr → ℕ
   | .inc r _ => r
   | .decjz r _ _ => r
+  | .addc r _ _ => r
 
 /-- Fracciones de la instrucción `x` en el estado `i`. -/
 noncomputable def block (R i : ℕ) : Instr → List (ℕ × ℕ)
   | .inc r j => [(pr r * pr (R + j), pr (R + i))]
   | .decjz r j k => [(pr (R + j), pr (R + i) * pr r), (pr (R + k), pr (R + i))]
+  | .addc r k j => [(pr r ^ k * pr (R + j), pr (R + i))]
 
 noncomputable def fracsFrom (R : ℕ) : ℕ → List Instr → List (ℕ × ℕ)
   | _, [] => []
@@ -170,6 +177,10 @@ theorem find_block_self {R : ℕ} (c : Cfg) (x : Instr) (hx : x.reg < R) :
       simp only [enc, Instr.exec, h0, ↓reduceIte]
       rw [Nat.mul_div_mul_left _ _ hst, body_dec hx _ h0,
         Nat.mul_div_cancel_left _ (pr_pos r)]
+  | addc r k j =>
+    refine ⟨(pr r ^ k * pr (R + j), pr (R + c.pc)), by simp [block, enc], ?_⟩
+    simp only [enc, Instr.exec, Nat.mul_div_cancel_left _ hst]
+    rw [body_add (r := r) hx]; ring
 
 theorem find_fracsFrom {R : ℕ} (c : Cfg) :
     ∀ (xs : List Instr) (i : ℕ), (∀ x ∈ xs, x.reg < R) →
@@ -254,6 +265,7 @@ def Prog.bound : Prog → ℕ
   | .skip => 0
   | .inc r => r + 1
   | .dec r => r + 1
+  | .addc r _ => r + 1
   | .seq p q => max p.bound q.bound
   | .loop r p => max (r + 1) p.bound
 
@@ -262,6 +274,7 @@ theorem reg_lt_of_mem_compile : ∀ (p : Prog) (b : ℕ) (x : Instr), x ∈ Prog
   | .skip, _, _, h => by simp [Prog.compile] at h
   | .inc r, _, x, h => by simp [Prog.compile] at h; subst h; simp [Instr.reg, Prog.bound]
   | .dec r, _, x, h => by simp [Prog.compile] at h; subst h; simp [Instr.reg, Prog.bound]
+  | .addc r k, _, x, h => by simp [Prog.compile] at h; subst h; simp [Instr.reg, Prog.bound]
   | .seq p q, b, x, h => by
     simp only [Prog.compile, List.mem_append] at h
     rcases h with h | h

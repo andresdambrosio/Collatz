@@ -22,6 +22,7 @@ inductive Prog
   | skip
   | inc (r : ℕ)
   | dec (r : ℕ)
+  | addc (r k : ℕ)
   | seq (p q : Prog)
   | loop (r : ℕ) (p : Prog)
   deriving DecidableEq
@@ -35,6 +36,7 @@ inductive Runs : Prog → Regs → Regs → Prop
   | skip (s) : Runs skip s s
   | inc (r s) : Runs (inc r) s (update s r (s r + 1))
   | dec (r s) : Runs (dec r) s (update s r (s r - 1))
+  | addc (r k s) : Runs (addc r k) s (update s r (s r + k))
   | seq {p q s t u} : Runs p s t → Runs q t u → Runs (seq p q) s u
   | loopStop {r p s} : s r = 0 → Runs (loop r p) s s
   | loopStep {r p s t u} : s r ≠ 0 → Runs p s t → Runs (loop r p) t u → Runs (loop r p) s u
@@ -44,6 +46,7 @@ theorem Runs.det {p s t u} (h1 : Runs p s t) (h2 : Runs p s u) : t = u := by
   | skip => cases h2; rfl
   | inc => cases h2; rfl
   | dec => cases h2; rfl
+  | addc => cases h2; rfl
   | seq _ _ ih1 ih2 =>
     cases h2 with
     | seq h h' => obtain rfl := ih1 h; exact ih2 h'
@@ -68,6 +71,9 @@ theorem Runs.iff_eq {p s t} (h : Runs p s t) {u} : Runs p s u ↔ u = t :=
 @[simp] theorem runs_dec {r s s'} : Runs (dec r) s s' ↔ s' = update s r (s r - 1) :=
   (Runs.dec r s).iff_eq
 
+@[simp] theorem runs_addc {r k s s'} : Runs (addc r k) s s' ↔ s' = update s r (s r + k) :=
+  (Runs.addc r k s).iff_eq
+
 theorem runs_seq {p q s u} : Runs (seq p q) s u ↔ ∃ t, Runs p s t ∧ Runs q t u :=
   ⟨fun h => by cases h with | seq h1 h2 => exact ⟨_, h1, h2⟩, fun ⟨_, h1, h2⟩ => .seq h1 h2⟩
 
@@ -78,6 +84,7 @@ def rename (σ : ℕ → ℕ) : Prog → Prog
   | skip => skip
   | inc r => inc (σ r)
   | dec r => dec (σ r)
+  | addc r k => addc (σ r) k
   | seq p q => seq (rename σ p) (rename σ q)
   | loop r p => loop (σ r) (rename σ p)
 
@@ -128,6 +135,9 @@ theorem Runs.rename {σ : ℕ → ℕ} (hσ : Injective σ) {p a b} (h : Runs p 
   | dec r a =>
     intro s rfl
     rw [extend_update hσ]; exact .dec _ _
+  | addc r k a =>
+    intro s rfl
+    rw [extend_update hσ]; exact .addc _ _ _
   | @seq p q a t u _ _ ih1 ih2 =>
     intro s rfl
     have h1 := ih1 s rfl
@@ -161,6 +171,10 @@ theorem runs_of_rename {σ : ℕ → ℕ} (hσ : Injective σ) :
     simp only [rename, runs_dec] at h; subst h
     rw [update_comp hσ, extend_update hσ]
     exact ⟨.dec _ _, rfl⟩
+  | addc r k, s, s', h => by
+    simp only [rename, runs_addc] at h; subst h
+    rw [update_comp hσ, extend_update hσ]
+    exact ⟨.addc _ _ _, rfl⟩
   | seq p q, s, s', h => by
     simp only [rename, runs_seq] at h
     obtain ⟨t, h1, h2⟩ := h
@@ -301,6 +315,84 @@ theorem Computes.call {n : ℕ} {f : List.Vector ℕ n →. ℕ} {P : Prog} (hP 
   · rintro ⟨y, hy, rfl⟩
     have := ((key _).2 ⟨y, hy, rfl⟩).rename hσ s rfl
     rwa [extend_update hσ, callMap_self] at this
+
+/-! ## Programas "mortales": sólo bucles `for`
+
+Un programa mortal no usa `addc` y usa bucles de la forma `while r ≠ 0 do (r := r - 1; q)` con `q` sin tocar `r`
+(o `clear r`). Compilado, se detiene desde *cualquier* configuración intermedia (ver
+`Conway.Prog.exits_compile`). -/
+
+/-- `p` menciona el registro `r`. -/
+def Uses (r : ℕ) : Prog → Prop
+  | skip => False
+  | inc r' => r' = r
+  | dec r' => r' = r
+  | addc r' _ => r' = r
+  | seq p q => Uses r p ∨ Uses r q
+  | loop r' p => r' = r ∨ Uses r p
+
+theorem uses_rename {σ : ℕ → ℕ} {r' : ℕ} : ∀ {p : Prog}, (p.rename σ).Uses r' → ∃ r, p.Uses r ∧ σ r = r'
+  | skip, h => h.elim
+  | inc r, h => ⟨r, rfl, h⟩
+  | dec r, h => ⟨r, rfl, h⟩
+  | addc r _, h => ⟨r, rfl, h⟩
+  | seq p q, h => by
+    rcases h with h | h
+    · obtain ⟨r, h1, h2⟩ := uses_rename h; exact ⟨r, .inl h1, h2⟩
+    · obtain ⟨r, h1, h2⟩ := uses_rename h; exact ⟨r, .inr h1, h2⟩
+  | loop r p, h => by
+    rcases h with h | h
+    · exact ⟨r, .inl rfl, h⟩
+    · obtain ⟨r, h1, h2⟩ := uses_rename h; exact ⟨r, .inr h1, h2⟩
+
+/-- Programas con sólo bucles `for` (mortales). -/
+inductive Mortal : Prog → Prop
+  | skip : Mortal skip
+  | inc (r) : Mortal (inc r)
+  | dec (r) : Mortal (dec r)
+  | seq {p q} : Mortal p → Mortal q → Mortal (seq p q)
+  | clear (r) : Mortal (loop r (dec r))
+  | forLoop {r q} : Mortal q → ¬ q.Uses r → Mortal (loop r (seq (dec r) q))
+
+theorem Mortal.rename {σ : ℕ → ℕ} (hσ : Injective σ) {p : Prog} (h : p.Mortal) :
+    (p.rename σ).Mortal := by
+  induction h with
+  | skip => exact .skip
+  | inc r => exact .inc _
+  | dec r => exact .dec _
+  | seq _ _ ih1 ih2 => exact .seq ih1 ih2
+  | clear r => exact .clear _
+  | @forLoop r q _ hu ih =>
+    refine .forLoop ih fun h => ?_
+    obtain ⟨r', h1, h2⟩ := uses_rename h
+    exact hu (hσ h2 ▸ h1)
+
+/-- Cambia la constante de todas las instrucciones `addc` por `m`. -/
+def setK (m : ℕ) : Prog → Prog
+  | skip => skip
+  | inc r => inc r
+  | dec r => dec r
+  | addc r _ => addc r m
+  | seq p q => seq (setK m p) (setK m q)
+  | loop r p => loop r (setK m p)
+
+/-- Los programas mortales no usan `addc`. -/
+theorem Mortal.setK {p : Prog} (h : p.Mortal) (m : ℕ) : p.setK m = p := by
+  induction h with
+  | skip => rfl
+  | inc => rfl
+  | dec => rfl
+  | seq _ _ ih1 ih2 => simp [Prog.setK, ih1, ih2]
+  | clear => rfl
+  | forLoop _ _ ih => simp [Prog.setK, ih]
+
+theorem mortal_moveAdd {src dst : ℕ} (h : src ≠ dst) : (moveAdd src dst).Mortal :=
+  .forLoop (.inc _) fun e => h e.symm
+
+theorem mortal_copy {src dst tmp : ℕ} (h1 : src ≠ dst) (h2 : src ≠ tmp) (h3 : dst ≠ tmp) :
+    (copy src dst tmp).Mortal :=
+  .seq (.forLoop (.seq (.inc _) (.inc _)) (by simp only [Uses]; omega))
+    (mortal_moveAdd (Ne.symm h2))
 
 end Prog
 
