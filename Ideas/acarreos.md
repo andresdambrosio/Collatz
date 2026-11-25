@@ -159,7 +159,7 @@ la mitad de la conjetura. **No lo cubre Nashida**, cuya barrera es sobre orienta
 ## C_3 (2026-11-24): certificados, potencial verdadero y un crecimiento que no parece acotado
 - **Certificados árticos para C_3:** UNSAT en d ≤ 3 (B = 3), también "bajo cero" (entradas ≥ −1, −2, −3;
   `neg` en `carry_srs_sat.py`, con chequeo independiente del modelo) y congelando los números < 2^j, j ≤ 5.
-  d = 4 en curso. Controles: C_0 y C_1 dan SAT en todas las variantes. Los núcleos mínimos (d = 1) son pasos reales
+  **d = 4 (B = 3): UNSAT** (3 h 44 min). Controles: C_0 y C_1 dan SAT en todas las variantes. Los núcleos mínimos (d = 1) son pasos reales
   de crecimiento de la familia `11…1` (1 → 2, 7 → 11, 31 → 47), no palabras mal formadas del SRS.
 - **Potencial verdadero** E(n) = (largo máximo futuro) − largo(n), n < 2^21. Clases de Myhill–Nerode (cota inferior de
   estados de un autómata determinista que calcule E exacto, ventanas de 8 cifras): C_0, C_1: 1 clase; C_3: 1, 2, 4, 8,

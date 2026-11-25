@@ -638,7 +638,7 @@ impares, lo que las cifras de arriba crecen *de más* (respecto de duplicar) se 
 tendencia, que en $L$ pasos se aleja unas $\sqrt{L}$ posiciones. En $C_2$ y en Collatz esa tendencia es positiva y
 el crecimiento es lineal.
 
-Tampoco hay certificados árticos para $C_3$ con matrices de hasta 3 × 3, ni siquiera permitiendo entradas
+Tampoco hay certificados árticos para $C_3$ con matrices de hasta 4 × 4 (el 4 × 4 tardó 3 h 44 min en dar UNSAT), ni siquiera permitiendo entradas
 negativas ("ártico bajo cero") ni congelando los números chicos; los núcleos de la contradicción son pasos reales de
 crecimiento como `111 → 1011` (7 → 11). La pregunta que queda, ahora bien planteada, es **[Abierto]**: ¿demostrar
 que $C_3$ no diverge, con un potencial que tolere un excedente del orden de $\sqrt{L}$?
