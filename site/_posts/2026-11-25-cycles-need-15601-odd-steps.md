@@ -1,10 +1,14 @@
 ---
 layout: post
 title: "A Collatz cycle would need at least 15,601 odd steps"
-date: 2026-11-24 12:00:00 -0300
+date: 2026-11-25 09:00:00 -0300
 ref: cycles
 tldr: "If some number ever came back to itself, that loop would need at least 15,601 odd steps. This bound is fully checked by Lean's kernel, with no unproved assumptions, up from 2,301. The trick: you don't need numbers to reach 1, only to dip below themselves."
 ---
+
+*Third post. The [first]({{ site.baseurl }}/2026/11/23/hello-collatz/) laid out the problem and the plan.
+The [second]({{ site.baseurl }}/2026/11/24/collatz-as-a-rewriting-game/) checked a reformulation of the whole
+conjecture. This one zooms in on one half of it, and unpacks a number the first post only mentioned in passing.*
 
 There are only two ways the Collatz conjecture could fail: some orbit grows forever, or some orbit
 **cycles**, coming back to its starting number without passing through 1. This post is about cycles.

@@ -1,10 +1,15 @@
 ---
 layout: post
 title: "Un ciclo de Collatz necesitaría al menos 15 601 pasos impares"
-date: 2026-11-24 12:00:00 -0300
+date: 2026-11-25 09:00:00 -0300
 ref: cycles
 tldr: "Si algún número volviera alguna vez a sí mismo, ese ciclo necesitaría al menos 15 601 pasos impares. Esta cota está verificada por completo en el kernel de Lean, sin hipótesis sin probar, y mejora la anterior de 2301. El truco: no hace falta que los números lleguen a 1, solo que bajen por debajo de sí mismos."
 ---
+
+*Tercer post. El [primero]({{ site.baseurl }}/es/2026/11/23/hola-collatz/) presentó el problema y el plan.
+El [segundo]({{ site.baseurl }}/es/2026/11/24/collatz-as-a-rewriting-game-es/) verificó una reformulación de la
+conjetura entera. Este se concentra en una de sus dos mitades y explica un número que el primero solo mencionó
+de pasada.*
 
 Hay solo dos formas de que la conjetura de Collatz sea falsa: que alguna órbita crezca para siempre, o que
 alguna órbita forme un **ciclo** y vuelva a su número inicial sin pasar por el 1. Este post es sobre los ciclos.
