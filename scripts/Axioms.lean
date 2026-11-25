@@ -72,3 +72,4 @@ import Collatz
 #print axioms Conway.allReachOne_not_re
 #print axioms Conway.allReachOne_not_core
 #print axioms Conway.allReachOne_undecidable
+#print axioms Conway.allReachOne_iff_total

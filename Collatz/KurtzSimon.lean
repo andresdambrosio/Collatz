@@ -16,10 +16,13 @@ es Π₂-completo. Acá formalizamos:
   `(toda órbita llega a 1) ↔ ∀ x, ∃ x' ≥ x, F(m, x') = 0` (la forma normal Π₂);
 * `allReachOne_not_re`: el conjunto de presentaciones con "toda órbita llega a 1" no es r.e.;
 * `allReachOne_not_core`: su complemento tampoco es r.e.;
-* `allReachOne_undecidable`: en particular, no es decidible.
+* `allReachOne_undecidable`: en particular, no es decidible;
+* `allReachOne_iff_total` (**Teorema 1 de Kurtz–Simon**): reducción computable desde la totalidad,
+  `c` es total sii toda órbita de `ι c` llega a 1.
 
-La Π₂-completitud propiamente dicha (que *todo* conjunto Π₂ se reduce) necesita además la forma
-normal de Kleene para Π₂ con el predicado recursivo primitivo de Mathlib; no está formalizada acá.
+La totalidad es el conjunto Π₂-completo estándar, así que esto da la Π₂-dureza. Lo único que no está es la
+definición formal de la clase Π₂ (Mathlib no tiene la jerarquía aritmética) ni la prueba de que la
+totalidad es Π₂-completa.
 
 Cadena: `Prog.Mortal` (programas con bucles `for`, que salen de su código desde cualquier
 configuración) → `outer` (bucle `while F(m, x) ≠ 0: x++`, que recarga `m` con una instrucción `addc`)
@@ -397,5 +400,150 @@ theorem allReachOne_not_core : ¬ REPred fun p => ¬ AllReachOne p := by
 /-- En particular, "toda órbita llega a 1" es indecidible. -/
 theorem allReachOne_undecidable : ¬ ComputablePred AllReachOne := fun h =>
   allReachOne_not_re h.to_re
+
+/-! ## La reducción desde la totalidad (Teorema 1 de Kurtz–Simon)
+
+`c` es total sii toda órbita de su función llega a 1. Usamos `F(c, ⟨k, t⟩) = 0` sii las entradas
+`0, …, k` terminan en `t` pasos y `t` es el mínimo con esa propiedad. -/
+
+/-- Las entradas `0, …, k` de `c` terminan en `≤ t` pasos. -/
+def haltAll (c : Code) (k t : ℕ) : Bool :=
+  (List.range (k + 1)).foldr (fun y b => (evaln t c y).isSome && b) true
+
+theorem foldr_and_iff {p : ℕ → Bool} :
+    ∀ l : List ℕ, l.foldr (fun y b => p y && b) true = true ↔ ∀ y ∈ l, p y = true
+  | [] => by simp
+  | y :: l => by simp [List.foldr, foldr_and_iff l]
+
+theorem haltAll_iff (c : Code) (k t : ℕ) :
+    haltAll c k t = true ↔ ∀ y ≤ k, (evaln t c y).isSome = true := by
+  rw [haltAll, foldr_and_iff]
+  simp [Nat.lt_succ_iff]
+
+theorem isSome_evaln_mono' {c : Code} {n k k' : ℕ} (h : k ≤ k') (hk : (evaln k c n).isSome) :
+    (evaln k' c n).isSome := by
+  obtain ⟨y, hy⟩ := Option.isSome_iff_exists.1 hk
+  exact Option.isSome_iff_exists.2 ⟨y, Nat.Partrec.Code.evaln_mono h hy⟩
+
+theorem haltAll_mono {c : Code} {k t t' : ℕ} (h : t ≤ t') (ht : haltAll c k t = true) :
+    haltAll c k t' = true := by
+  rw [haltAll_iff] at ht ⊢
+  exact fun y hy => isSome_evaln_mono' h (ht y hy)
+
+theorem haltAll_zero (c : Code) (k : ℕ) : haltAll c k 0 = false := by
+  cases h : haltAll c k 0
+  · rfl
+  · have := (haltAll_iff c k 0).1 h 0 (Nat.zero_le _)
+    simp [Nat.Partrec.Code.evaln] at this
+
+theorem primrec_haltAll : Primrec fun a : (Code × ℕ) × ℕ => haltAll a.1.1 a.1.2 a.2 := by
+  unfold haltAll
+  refine Primrec.list_foldr (σ := Bool) (β := ℕ)
+    (h := fun a p => (evaln a.2 a.1.1 p.1).isSome && p.2) (Primrec.list_range.comp (Primrec.succ.comp (Primrec.snd.comp
+    Primrec.fst))) (Primrec.const true) ?_
+  exact Primrec.and.comp (Primrec.option_isSome.comp (Nat.Partrec.Code.primrec_evaln.comp
+    (Primrec.pair (Primrec.pair (Primrec.snd.comp Primrec.fst)
+      (Primrec.fst.comp (Primrec.fst.comp Primrec.fst))) (Primrec.fst.comp Primrec.snd))))
+    (Primrec.snd.comp Primrec.snd)
+
+/-- `0` sii `x = ⟨k, t⟩` con `t` el primer tiempo en que terminaron las entradas `0, …, k`. -/
+def totF (v : List.Vector ℕ 2) : ℕ :=
+  bif haltAll (ofNat Code v.head) v.tail.head.unpair.1 v.tail.head.unpair.2 &&
+      !haltAll (ofNat Code v.head) v.tail.head.unpair.1 (v.tail.head.unpair.2 - 1) then 0 else 1
+
+theorem primrec'_totF : Nat.Primrec' totF := by
+  refine Nat.Primrec'.of_prim ?_
+  have hx : Primrec fun v : List.Vector ℕ 2 => v.tail.head :=
+    Primrec.vector_head.comp Primrec.vector_tail
+  have hc : Primrec fun v : List.Vector ℕ 2 => ofNat Code v.head :=
+    (Primrec.ofNat Code).comp Primrec.vector_head
+  have hk := Primrec.fst.comp (Primrec.unpair.comp hx)
+  have ht := Primrec.snd.comp (Primrec.unpair.comp hx)
+  exact Primrec.cond (Primrec.and.comp (primrec_haltAll.comp (Primrec.pair (Primrec.pair hc hk) ht))
+    (Primrec.not.comp (primrec_haltAll.comp (Primrec.pair (Primrec.pair hc hk)
+      (Primrec.nat_sub.comp ht (Primrec.const 1)))))) (Primrec.const 0) (Primrec.const 1)
+
+theorem totF_eq_zero (c : Code) (x : ℕ) :
+    totF (encode c ::ᵥ x ::ᵥ List.Vector.nil) = 0 ↔
+      haltAll c x.unpair.1 x.unpair.2 = true ∧ haltAll c x.unpair.1 (x.unpair.2 - 1) = false := by
+  simp only [totF, List.Vector.head_cons, List.Vector.tail_cons, ofNat_encode]
+  cases haltAll c x.unpair.1 x.unpair.2 <;> cases haltAll c x.unpair.1 (x.unpair.2 - 1) <;> simp
+
+theorem totF_iff (c : Code) :
+    (∀ x, ∃ x' ≥ x, totF (encode c ::ᵥ x' ::ᵥ List.Vector.nil) = 0) ↔ ∀ y, (c.eval y).Dom := by
+  classical
+  simp only [totF_eq_zero]
+  have dom_iff : ∀ y, (c.eval y).Dom ↔ ∃ t, (evaln t c y).isSome := by
+    intro y
+    constructor
+    · intro h
+      obtain ⟨z, hz⟩ := Part.dom_iff_mem.1 h
+      obtain ⟨t, ht⟩ := Nat.Partrec.Code.evaln_complete.1 hz
+      exact ⟨t, Option.isSome_iff_exists.2 ⟨z, ht⟩⟩
+    · rintro ⟨t, ht⟩
+      obtain ⟨z, hz⟩ := Option.isSome_iff_exists.1 ht
+      exact Part.dom_iff_mem.2 ⟨z, Nat.Partrec.Code.evaln_sound hz⟩
+  constructor
+  · intro h y
+    by_contra hy
+    -- sólo hay finitos testigos: `k < y` y `t` determinado por `k`
+    let T : ℕ → ℕ := fun k => if hk : ∃ t, haltAll c k t = true then Nat.find hk else 0
+    set B := ((Finset.range y).image fun k => Nat.pair k (T k)).sup id
+    obtain ⟨x', hx', h1, h2⟩ := h (B + 1)
+    have hky : x'.unpair.1 < y := by
+      by_contra hle
+      push Not at hle
+      exact hy ((dom_iff y).2 ⟨_, (haltAll_iff _ _ _).1 h1 y hle⟩)
+    have hT : T x'.unpair.1 = x'.unpair.2 := by
+      have hex : ∃ t, haltAll c x'.unpair.1 t = true := ⟨_, h1⟩
+      simp only [T, dif_pos hex]
+      have hle := Nat.find_min' hex h1
+      by_contra hne
+      have := haltAll_mono (show Nat.find hex ≤ x'.unpair.2 - 1 by omega) (Nat.find_spec hex)
+      rw [h2] at this; exact Bool.false_ne_true this
+    have hmem : x' ∈ (Finset.range y).image fun k => Nat.pair k (T k) :=
+      Finset.mem_image.2 ⟨x'.unpair.1, Finset.mem_range.2 hky, by rw [hT, Nat.pair_unpair]⟩
+    have := Finset.le_sup (f := id) hmem
+    simp only [id] at this
+    omega
+  · intro htot x
+    have hex : ∃ t, haltAll c x t = true := by
+      suffices ∀ k, ∃ t, ∀ y ≤ k, (evaln t c y).isSome = true by
+        obtain ⟨t, ht⟩ := this x; exact ⟨t, (haltAll_iff _ _ _).2 ht⟩
+      intro k
+      induction k with
+      | zero =>
+        obtain ⟨t, ht⟩ := (dom_iff 0).1 (htot 0)
+        exact ⟨t, fun y hy => by rw [Nat.le_zero.1 hy]; exact ht⟩
+      | succ k ih =>
+        obtain ⟨t1, h1⟩ := ih
+        obtain ⟨t2, h2⟩ := (dom_iff (k + 1)).1 (htot (k + 1))
+        refine ⟨max t1 t2, fun y hy => ?_⟩
+        rcases Nat.lt_or_ge y (k + 1) with h | h
+        · exact isSome_evaln_mono' (le_max_left _ _) (h1 y (by omega))
+        · rw [show y = k + 1 by omega]; exact isSome_evaln_mono' (le_max_right _ _) h2
+    set t0 := Nat.find hex
+    have ht0 : t0 ≠ 0 := by
+      intro h0
+      have := Nat.find_spec hex
+      rw [← show t0 = Nat.find hex from rfl, h0, haltAll_zero] at this
+      exact Bool.false_ne_true this
+    refine ⟨Nat.pair x t0, Nat.left_le_pair _ _, ?_, ?_⟩
+    · rw [Nat.unpair_pair]; exact Nat.find_spec hex
+    · rw [Nat.unpair_pair]
+      cases h : haltAll c x (t0 - 1)
+      · rfl
+      · exact absurd h (Nat.find_min hex (by omega))
+
+/-- **Teorema 1 de Kurtz–Simon.** Hay una reducción computable `c ↦ (D, tabla)` a funciones de
+Collatz afines genuinas tal que el programa `c` es total sii toda órbita llega a 1. -/
+theorem allReachOne_iff_total :
+    ∃ ι : Code → ℕ × List (ℕ × ℕ × ℕ), Computable ι ∧
+      (∀ c, AllReachOne (ι c) ↔ ∀ y, (c.eval y).Dom) ∧
+      ∀ c, ∃ a b : ℕ → ℚ, ∀ n, (agcf (ι c).1 (ι c).2 n : ℚ) =
+        a (n % (ι c).1) * n + b (n % (ι c).1) := by
+  obtain ⟨ι, hι, hiff, hrat⟩ := ks_reduction primrec'_totF
+  exact ⟨fun c => ι (encode c), hι.comp Computable.encode,
+    fun c => (hiff (encode c)).trans (totF_iff c), fun c => hrat (encode c)⟩
 
 end Conway

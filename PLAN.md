@@ -99,7 +99,8 @@ Es una mejora del resultado *formal*; la literatura (con verificación a 2⁷¹,
       `Conway.allReachOne_not_core` (ni r.e. ni co-r.e.), `allReachOne_undecidable`, y la reducción genérica
       `ks_reduction` (forma Π₂ `∀x ∃x' ≥ x, F(m,x') = 0` con `F` recursiva primitiva). `Collatz/KurtzSimon.lean`
       + `Conway/Mortal.lean`, `Outer.lean`, `Affine.lean` (2026-11-25).
-- [ ] Opcional: Π₂-completitud propiamente dicha (reducir todo conjunto Π₂ vía forma normal de Kleene).
+- [x] Teorema 1 de Kurtz–Simon tal cual: `Conway.allReachOne_iff_total` (`c` total ⟺ toda órbita llega a 1),
+      reducción computable desde la totalidad (Π₂-dureza). No formalizado: la clase Π₂ (no está en Mathlib).
 
 ### Fase 5 — Frente divergencia (`no_divergent_orbits`)
 - [x] Retrato de un contraejemplo (Forge): → ∞, densidad de impares ≤ log₂3, aperiódico,

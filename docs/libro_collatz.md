@@ -450,8 +450,12 @@ todavía más difícil: es $\Pi_2$-completa, el mismo nivel que "¿este programa
   ambos está `Conway.ks_reduction`. Para toda $F$ recursiva primitiva arma, de forma computable, funciones afines
   genuinas en las que toda órbita llega a 1 sii $\forall x\, \exists x' \ge x,\ F(m, x') = 0$. Esa es
   exactamente la forma $\Pi_2$.
-- **[Literatura]** Que *todo* problema $\Pi_2$ se reduzca a este (la completitud propiamente dicha) agrega la
-  forma normal de Kleene; esa parte no la formalizamos.
+- **[Lean]** El Teorema 1 de Kurtz y Simon, tal cual: hay una traducción computable de programas a funciones
+  afines tal que **el programa termina con toda entrada sii toda órbita llega a 1**
+  (`Conway.allReachOne_iff_total`). Como "¿termina con toda entrada?" es el problema $\Pi_2$-completo de
+  referencia, esto es la $\Pi_2$-dureza.
+- **[Literatura]** Lo que no formalizamos: la definición de la clase $\Pi_2$ y la prueba de que la totalidad es
+  $\Pi_2$-completa. Mathlib no tiene la jerarquía aritmética.
 
 Lo nuevo respecto de Conway es que ahora hay que controlar **todos** los números, no sólo los que codifican una
 computación prolija. Tres ideas lo resuelven:
@@ -475,9 +479,20 @@ negación sale que el complemento tampoco lo es (`Collatz/KurtzSimon.lean`).
 
 ### Qué es nuestro y qué no
 
-- Los teoremas son de Conway (1972) y de Kurtz y Simon (2007); la construcción para "todo número" la armamos
-  nosotros siguiendo esa idea (no tuvimos el paper a mano). Lo nuestro es **la verificación formal**. En una
+- Los teoremas son de Conway (1972) y de Kurtz y Simon (2007). Lo nuestro es **la verificación formal**. En una
   búsqueda no encontramos una formalización previa de Kurtz–Simon en ningún asistente de pruebas.
+- **[Literatura]** Cómo se compara con el original:
+  - La idea central es de ellos: convertir una máquina en otra que se detiene desde *toda* configuración, con un
+    cálculo interno acotado por un reloj, que siempre termina, que habilita cada paso del cálculo externo. En el
+    borrador de 2006 que vimos es su Teorema 2.3.
+  - Nuestra versión del bucle externo es distinta: `mientras F(m, x) ≠ 0: x++`, con $F$ recursiva primitiva,
+    compilada sólo con bucles `for`.
+  - Ese borrador no tiene la parte aritmética (la sección 3 está vacía). Según la bibliografía anotada de Lagarias,
+    la versión publicada "no da pruebas detalladas". La limpieza de la basura dentro del número (pares de estados,
+    registros sueltos, la regla $(n+1)/2$) la armamos nosotros.
+  - Ellos reducen directamente desde la totalidad ("¿el programa termina con toda entrada?"). Nosotros pasamos
+    por la forma $\Pi_2$ general: elegimos $F(c, \langle k, t\rangle) = 0$ cuando las entradas $0, \dots, k$
+    terminan en $t$ pasos, con $t$ mínimo.
 - **[Literatura]** Ya existe una formalización en Coq de la indecidibilidad de FRACTRAN (Larchey-Wendling y
   Forster, en la *Coq Library of Undecidability Proofs*, usada para el décimo problema de Hilbert). En una
   búsqueda rápida no encontramos una en Lean, pero no lo descartamos.
@@ -870,10 +885,10 @@ Esto **no** demuestra Collatz, pero convierte la vieja brecha "casi todos → to
 ### Hacerlo en público
 
 El repositorio es público (licencia Apache-2.0) y hay un blog en inglés y español
-([andresdambrosio.github.io/Collatz](https://andresdambrosio.github.io/Collatz/)). Publicados: la presentación y
-"Collatz como un juego de reescribir palabras". En borrador: la cota de 15 601, el laboratorio, y "un mundo donde
-Collatz está resuelto" (antes de publicar estos dos últimos hay que citar rstation y el resultado de densidad
-positiva).
+([andresdambrosio.github.io/Collatz](https://andresdambrosio.github.io/Collatz/)). Publicados: la presentación,
+"Collatz como un juego de reescribir palabras" y la cota de 15 601. Los borradores anteriores (el laboratorio, "un
+mundo donde Collatz está resuelto" y una página de estado) se descartaron el 25/11. Los nuevos tienen que citar
+rStation y el resultado de densidad positiva (`docs/prior_art_rstation.md`).
 
 ### Lo que sigue
 
