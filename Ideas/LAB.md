@@ -173,3 +173,45 @@ El hueco de Opfer (2011): su algoritmo de aniquilación es el mapa de Collatz co
 así que su Teorema 4.17 es la conjetura: la prueba es circular. Szegő y Mahler/Cobham (Adamczewski–Bell) no aplican.
 **Síntesis de las rondas 6–7:** en todas las traducciones probadas (2-ádica, polinomial, acarreos, analítica), el problema
 se ve igual o se vuelve trivial. Lo que nunca viaja es la interacción entre el tamaño real y la estructura 2-ádica.
+
+## Ronda 8: triage contra la literatura de rStation (2026-11-25) — las tres direcciones, cerradas o sin herramientas
+Detalle de lectura en `docs/prior_art_rstation.md`. Después de leer rStation (229 papers), quedaban tres direcciones
+"abiertas". Triage de cada una:
+
+1. **Certificados que leen desde la cifra más significativa** — *cerrada en lo esencial*.
+   - **Árticos (max-plus):** collatz_53 cubre los dos sentidos de lectura, sin condición de fin, para las cuatro clases
+     abiertas de YAH; tres de ellas ya estaban en Nashida (Cor. 8.1).
+   - **Naturales (suma-producto):**
+     - collatz_45: lectura desde la cifra menos significativa (LSB), pesos finales positivos;
+     - collatz_60: cualquier sentido de lectura si `Γ_lo > 0`, y dimensión 2 para `H`;
+     - collatz_59: para `H` (clase `{5,7}`), ninguna interpretación natural monótona elimina reglas, en cualquier
+       dimensión.
+   - **Con signo:** collatz_86 (pares fuertemente irreducibles y proximales).
+   - **Lo que queda:** naturales reducibles con `Γ_lo ≤ 0` y pesos finales nulos para `{1}`, `{5}`, `{7}`; técnicas
+     combinadas (pares de dependencia, otras técnicas antes). Cualquier certificado que sobreviva tendría productos
+     0/1 y crecimiento polinomial en el largo (tipo Teorema 1 de collatz_59). Eso es casi "contar patrones", y las
+     sumas por ventanas ya están excluidas (collatz_98, collatz_208).
+   - **Veredicto:** rincones técnicos; poco valor esperado como vía de prueba.
+2. **Usar la positividad a escala 2-ádica fina** — *abierta, pero sin herramientas*.
+   - Todo certificado conocido muere en ciclos negativos: `−1`, `−5`, `−17` y sus "sombras" (collatz_32 §6,
+     collatz_162, collatz_3, collatz_40 §6).
+   - Nadie tiene un mecanismo constructivo que distinga los positivos de los puntos periódicos negativos que se
+     acumulan a toda profundidad. Es el "tamaño vs. 2-ádico" de nuestras rondas 6–7, dicho de otra forma.
+   - **Veredicto:** es donde está la dificultad, no una vía.
+3. **Cifras iniciales de órbitas individuales** — *resuelta en la forma automática, y no distingue 3x+1 de 5x+1*.
+   - collatz_203 prueba que toda palabra aparece en las cifras iniciales de toda órbita no eventualmente periódica,
+     en toda base. Con collatz_66, ningún conjunto automático invariante y sin ciclos certifica divergencia.
+   - Pero collatz_66, Teorema B, muestra que todo esto vale igual para `5x ± 1`. No usa la deriva negativa
+     `log(3/4)`, que es la propiedad que separa a Collatz.
+   - **Veredicto:** cerrada como vía.
+
+**Síntesis de la ronda 8.** Los métodos de estados finitos (potenciales, autómatas, interpretaciones matriciales de
+cualquier semianillo razonable, ventanas, cifras iniciales) están mapeados y cerrados con teoremas. Los únicos
+ingredientes que separan a 3x+1 de 5x+1 y de los ciclos negativos son la **deriva negativa** (arquimediana) y la
+**positividad**. Ningún método conocido los combina para una sola órbita.
+
+Opciones realistas para el proyecto:
+- **(a) Contribuciones formales.** Verificar en Lean barreras que hoy sólo están en papel, como el Teorema A/B de
+  collatz_32 o el lema de separación de collatz_40. Son resultados nuevos *como verificación*, no avances hacia la prueba.
+- **(b) Exploración de la dirección 2.** Estudiar numéricamente cómo los enteros positivos evitan las sombras de los
+  ciclos negativos. Es heurístico y de largo plazo.
