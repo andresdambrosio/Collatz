@@ -926,7 +926,8 @@ Esto **no** demuestra Collatz, pero convierte la vieja brecha "casi todos → to
 
 El repositorio es público (licencia Apache-2.0) y hay un blog en inglés y español
 ([andresdambrosio.github.io/Collatz](https://andresdambrosio.github.io/Collatz/)). Publicados: la presentación,
-"Collatz como un juego de reescribir palabras" y la cota de 15 601. Los borradores anteriores (el laboratorio, "un
+"Collatz como un juego de reescribir palabras", la cota de 15 601 y "No hay un método general" (Conway y
+Kurtz–Simon, 26/11). Los borradores anteriores (el laboratorio, "un
 mundo donde Collatz está resuelto" y una página de estado) se descartaron el 25/11. Los nuevos tienen que citar
 rStation y el resultado de densidad positiva (`docs/prior_art_rstation.md`).
 
