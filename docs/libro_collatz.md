@@ -970,6 +970,41 @@ de la ronda 8 (los ciclos negativos y sus sombras), que reaparece en las dos esc
 todas las bases que dividen a la dinámica. Lo que una prueba tiene que usar es que los números positivos no pueden
 quedarse cerca de $-1$ para siempre, y eso no es información de cifras: es tamaño.
 
+## Capítulo 14d. Ronda 11: cuatro ideas raras a la vez
+
+Después de la ronda 10 probamos algo distinto: mandar cuatro agentes a trabajar en paralelo, cada uno con una idea "fuera
+de la caja", con las mismas reglas del laboratorio (buscar antecedentes, un experimento que pueda refutar la idea, y
+buscar el error antes de creer un éxito). Revisamos un dato central de cada informe por nuestra cuenta.
+
+**A. Potenciales que no son locales.** Si mirar ventanas no alcanza, ¿y mirar el largo de la tira final de unos, que es
+justo lo que crece en la sombra de $-1$? La potencial $\log_2 n + c \cdot (\text{tira final de unos})$ paga la sombra,
+pero falla en el 14,3 % de los impares: cuando después de dividir por 2 aparece una tira nueva larga. Y hay infinitos
+ciclos racionales que crecen ($-19/11$, $-65/49$, …), cada uno con su sombra; ningún conjunto finito de rasgos los paga a
+todos. Lo más claro que salió: la única potencial que funciona es "cuánto va a crecer como máximo la órbita en el futuro",
+y que eso sea finito para todo $n$ es exactamente que no haya órbitas divergentes. Ya no es una metáfora: la potencial
+buscada *es* media conjetura.
+
+**B. Números complejos.** Se puede extender Collatz a una función entera del plano complejo y usar la teoría de
+dinámica holomorfa: una órbita divergente sería un "dominio errante". El problema es que al extender uno elige libremente
+las derivadas en los enteros, y la teoría devuelve lo que uno le puso: no distingue 3x+1 de 5x+1. El multiplicador de un
+ciclo sale ser la propia ecuación del ciclo, reescrita.
+
+**C. Inventar un problema más fuerte.** Pólya aconseja probar algo más fuerte cuando la inducción no cierra. Probamos
+reglas finitas que dejan bajar a $n$ por cualquier camino del grafo, hacia adelante o hacia atrás. Mejoran (sobrevive el
+2,4 % de las clases en vez del 5,5 %), pero se estancan, y encontramos por qué: hay "números" 2-ádicos y 3-ádicos *mixtos*,
+como el que vale $-1$ en $\mathbb{Z}_2$ y $0$ en $\mathbb{Z}_3$. Hacia adelante se comporta como la sombra de $-1$ (crece
+para siempre) y, por ser múltiplo de 3 a toda profundidad, no tiene predecesores. Ninguna regla finita lo hace bajar.
+
+**D. Toda la familia $3x + a$.** Los ciclos de $3x+a$ son ciclos racionales de $3x+1$ con denominador $a$. ¿Será más fácil
+un enunciado para todos los $a$ a la vez? No: cualquier cuenta sobre todos los $a$ mezcla tantos casos que $a = 1$ pesa
+lo que una gota en un balde. Es la misma brecha entre "en promedio" y "en este caso" de las rondas 1 a 5 y 9. Curiosidad:
+$a = 1$ es el caso con *más* tipos de ciclo posibles, no con menos.
+
+**La síntesis.** Las cuatro mueren en el mismo lugar, visto desde cuatro lados: los métodos ven datos locales (restos,
+cifras, derivadas) o promedios, y en esos datos los ciclos negativos y racionales, con sus sombras, son indistinguibles de
+los números positivos. Lo que separa a los positivos es su **tamaño a lo largo de toda la órbita**, y ninguna herramienta
+conocida lo captura.
+
 ## Capítulo 15. Balance honesto
 
 ### Lo que está verificado en Lean (nuestro trabajo)
@@ -1016,8 +1051,13 @@ rStation y el resultado de densidad positiva (`docs/prior_art_rstation.md`).
 2. (Hecho, ronda 9.) Entre Tao y "casi todos llegan a 1" hay una brecha exponencial: de $(\log N_0)^{-c}$ a $1/N_0$.
 3. (Hecho, ronda 10.) Potenciales que leen en base 2 y 3 a la vez: no mejoran nada (test exacto); el ciclo de $-1$ se ve
    quieto en las dos bases.
-4. Leer a fondo rstation y la matemática de M2.
-5. `Collatz/Frontier.lean`: un atlas de enunciados abiertos con sus reducciones verificadas.
+4. (Hecho, ronda 11.) Cuatro ideas en paralelo (potenciales no locales, dinámica holomorfa, inducción reforzada, familia
+   $3x+a$): las cuatro cerradas. Queda abierta una conjetura chica (C1, ronda 11 C).
+   Por explorar: con C1, un teorema de barrera limpio, "ninguna prueba por descenso con reglas expresables en la
+   aritmética de Presburger (sólo suma) alcanza". El paso de Collatz se escribe con sumas; lo que no se puede escribir
+   es "iterar hasta llegar a 1", y ahí está la dificultad.
+5. Leer a fondo rstation y la matemática de M2.
+6. `Collatz/Frontier.lean`: un atlas de enunciados abiertos con sus reducciones verificadas.
 
 ---
 

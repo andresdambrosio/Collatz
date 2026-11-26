@@ -50,6 +50,8 @@ Proyecto Lake (Lean `v4.33.1` + Mathlib) para formalizar la conjetura de Collatz
   locales), `carry_srs*` (SRS + certificados de largo acotado; `carry_srs_sat.py` usa python-sat/CaDiCaL). Ver `Ideas/acarreos.md`.
 - `scripts/two_base_potential.py` (muestras) y `scripts/two_base_exact.py` (LP exacto sobre transductores): ronda 10,
   potenciales que leen en base 2 y 3 a la vez. Ver `Ideas/dos_bases.md`.
+- Ronda 11 (`Ideas/potenciales_no_locales.md`, `dinamica_holomorfa.md`, `induccion_reforzada.md`, `familia_3xa.md`):
+  scripts `scripts/nl_*.py`, `hol_*.py`, `ind_*.py`, `fam_*.py`.
 - `Ideas/LAB.md`: laboratorio de ideas hacia la prueba completa (protocolo, rondas, síntesis).
 - `docs/prior_art_rewriting.md`: prior art de la Fase 4 (Nashida 2026: barreras en Lean).
 - `docs/libro_collatz.md`: el recorrido completo del proyecto, en castellano, didáctico y autocontenido (mantenerlo al día).

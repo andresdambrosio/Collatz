@@ -235,3 +235,32 @@ las sombras del ciclo de −1 (`n = 2^K m − 1`: residuo fijo, `log` creciente)
 autómatas validados contra cálculo directo): déficit **exactamente 1 bit por paso impar**, igual con una base que con dos;
 el óptimo es la potencial trivial (largo en bits). `−1` es punto fijo 2-ádico y 3-ádico a la vez: sus sombras `6^K m − 1`
 se ven quietas en las dos escrituras. Leer en dos bases no rompe la barrera de signo.
+
+## Ronda 11: cuatro ideas "fuera de la caja" en paralelo (2026-11-26) — las cuatro cerradas
+Cuatro agentes en paralelo, uno por opción; verifiqué por mi cuenta un dato central de cada uno.
+- **A, potenciales no locales** (`Ideas/potenciales_no_locales.md`, `scripts/nl_*.py`). Descenso por bloques: refutado
+  con testigos periódicos (ya cubierto, más fuerte, por rStation collatz_208). Rasgos de cola: `log₂ n + c·(tira final de
+  unos)` falla en el 14,3 % de los impares (verificado aparte: 14,2–14,4 % a 30, 60 y 120 bits); agregar distancias a −5 y
+  −17 empeora, y hay infinitos ciclos racionales crecientes (−19/11, −65/49, …) cuyas sombras ningún conjunto finito de
+  rasgos paga. Ingrediente mínimo: la excursión futura máxima `G_ε`; que sea finita en todo `n` **es** "no hay divergencia".
+- **B, dinámica holomorfa** (`Ideas/dinamica_holomorfa.md`, `scripts/hol_*.py`). En una extensión entera, las derivadas
+  en los enteros son datos libres: la teoría devuelve lo que uno le pone y no distingue 3x+1 de 5x+1. Con la extensión
+  ingenua, el multiplicador de un ciclo es `∏ 1/(1 + 1/(3nᵢ))` (verificado: 3/2 para −1, 9/8 para −5), que es la ecuación
+  del ciclo; y "no hay divergencia ⟺ ℤ⁺ ⊂ Fatou" es la conjetura. LSW no se pudo leer (sólo por la reseña de Lagarias).
+- **C, inducción reforzada** (`Ideas/induccion_reforzada.md`, `scripts/ind_*.py`). Ninguna regla finita cierra: sólo ve
+  residuos 2-ádicos y 3-ádicos, y hay puntos **mixtos** (−1 en ℤ₂ y 0 en ℤ₃; también −5 y −17) que hacia adelante son
+  sombras de ciclos negativos y hacia atrás no tienen predecesores. No bajan con ningún camino no dirigido de radio ≤ 44
+  (verificado aparte a radio 24 sin tope). La inducción no dirigida (adelante y atrás en el grafo) baja la supervivencia
+  de 5,5 % a 2,4 % pero se estanca. Abierta: conjetura C1 (implicaría que ningún radio alcanza).
+- **D, la familia 3x+a** (`Ideas/familia_3xa.md`, `scripts/fam_*.py`). La familia es una partición de los ciclos
+  racionales de 3x+1 por denominador; todo enunciado uniforme en `a` es combinación de conteos `c_e` y el caso `a = 1`
+  aparece sólo en el módulo extremo: promediar sobre `a` lo diluye (brecha distribucional → puntual). Reproduce la tabla
+  de Belaga–Mignotte para `d < 20000` (verificado aparte: los ciclos de 3x+5 son los de mínimos 1, 5, 19, 23, 187, 347).
+  `a = 1` es el caso con más tipos de ciclo admisibles, no con menos.
+
+**Síntesis de la ronda 11.** Las cuatro mueren en el mismo lugar que todo lo anterior, ahora visto desde cuatro lados:
+una regla finita, una potencial, una extensión analítica o un promedio sobre la familia sólo ven datos locales (residuos,
+derivadas, cifras) o promedios, y los ciclos negativos (y los racionales) con sus sombras son indistinguibles de los
+positivos en esos datos. Lo que separa a los positivos es el **tamaño a lo largo de una órbita entera**, y ningún método
+probado lo captura. El ingrediente mínimo de A lo dice sin metáfora: la potencial que funciona es la excursión futura de
+la órbita, y su finitud es la mitad de la conjetura.

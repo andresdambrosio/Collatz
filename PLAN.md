@@ -126,6 +126,17 @@ Es una mejora del resultado *formal*; la literatura (con verificación a 2⁷¹,
 - [x] Test exacto (`scripts/two_base_exact.py`): ventanas binarias + ternarias no mejoran la potencial trivial (déficit
       exactamente 1 bit por paso impar). `−1` es punto fijo 2-ádico y 3-ádico. Ver `Ideas/dos_bases.md`.
 
+### Contexto — Ronda 11: A–D en paralelo (2026-11-26) — cerradas
+- [x] A potenciales no locales, B dinámica holomorfa, C inducción reforzada, D familia 3x+a: las cuatro cerradas, con
+      causa exacta (ver `Ideas/LAB.md`, ronda 11). Abierta y chica: conjetura C1 de `Ideas/induccion_reforzada.md`.
+- [ ] **Por explorar: barrera de Presburger.** El paso `T` es definible en aritmética de Presburger (sólo suma); la
+      iteración no. Los subconjuntos de ℕ definibles en Presburger son los eventualmente periódicos (uniones de clases
+      de restos), y las reglas finitas de descenso/conexión de la ronda 11 C son exactamente las expresables ahí.
+      Enunciado buscado: "no existe prueba de Collatz por descenso con reglas expresables en Presburger". La parte hacia
+      adelante ya está (bombeo sobre las sombras `2^K·m − 1`); la no dirigida depende de C1. Probar C1 y, si cierra,
+      formalizar la barrera en Lean. Es un teorema de barrera, no un avance hacia la prueba. (Sugerencia surgida de
+      mirar el árbol de teorías de Tegmark, nov. 2026; el resto de sus ramas ya estaba cubierto: ver LAB, rondas 1–11.)
+
 ## Laboratorio de ideas (desde 2026-11-23)
 Cinco rondas documentadas en `Ideas/LAB.md`: minería de literatura, catálogo de Chang (29 paradigmas),
 etiquetado semántico + matrices (`scripts/labelled_*.py`), obstrucción de logaritmo discreto (colapsa en
