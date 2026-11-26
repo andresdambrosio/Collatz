@@ -225,3 +225,13 @@ Paso 1b: versión con densidad logarítmica (`collatz_iff_logDensity_one`). La e
 densidad excepcional `ε(m*) ≥ c_a ≍ 1/m*` (densidad de un árbol de predecesores, medida en `scripts/tree_density.py`),
 y Tao da `ε(N₀) ≪ (log N₀)^{-c}` (pérdida en la Prop. 1.17, decaimiento `n^{-A}` de Fourier de Syracuse).
 **Brecha exponencial**: el muro de "una sola órbita" con número. El filtro 3x−1 no aplica (se corrigió). Cerrada como vía.
+
+## Ronda 10: certificados en dos bases (2026-11-26) — cerrada para potenciales locales
+Detalle en `Ideas/dos_bases.md`. Potenciales `log n + ventanas binarias + ventanas ternarias` con descenso en cada paso
+de Syracuse: todos infactibles en la búsqueda por muestras (`scripts/two_base_potential.py`); sin piso de pesos, (6,0) y
+(6,4) dan exactamente el mismo déficit (el ternario no aporta). Estructura: las cifras ternarias bajas codifican las
+últimas valuaciones, así que la parte de borde es un potencial de residuos mod `6^k` más tamaño acotado, y eso lo matan
+las sombras del ciclo de −1 (`n = 2^K m − 1`: residuo fijo, `log` creciente). Test exacto (`scripts/two_base_exact.py`,
+autómatas validados contra cálculo directo): déficit **exactamente 1 bit por paso impar**, igual con una base que con dos;
+el óptimo es la potencial trivial (largo en bits). `−1` es punto fijo 2-ádico y 3-ádico a la vez: sus sombras `6^K m − 1`
+se ven quietas en las dos escrituras. Leer en dos bases no rompe la barrera de signo.

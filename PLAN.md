@@ -122,6 +122,10 @@ Es una mejora del resultado *formal*; la literatura (con verificación a 2⁷¹,
 - [x] Lectura de Tao: hace falta excepcional `o(1/N₀)`, Tao da `(log N₀)^{-c}`; brecha exponencial (`Ideas/tao_constante.md`).
 - [x] Puente: `M2.predDensity_of_statement` + chequeo de fidelidad dentro de ProofAtlas (`scripts/m2_fidelity/`).
 
+### Contexto — Ronda 10: potenciales en dos bases (2026-11-26) — cerrada
+- [x] Test exacto (`scripts/two_base_exact.py`): ventanas binarias + ternarias no mejoran la potencial trivial (déficit
+      exactamente 1 bit por paso impar). `−1` es punto fijo 2-ádico y 3-ádico. Ver `Ideas/dos_bases.md`.
+
 ## Laboratorio de ideas (desde 2026-11-23)
 Cinco rondas documentadas en `Ideas/LAB.md`: minería de literatura, catálogo de Chang (29 paradigmas),
 etiquetado semántico + matrices (`scripts/labelled_*.py`), obstrucción de logaritmo discreto (colapsa en

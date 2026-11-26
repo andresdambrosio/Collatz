@@ -67,3 +67,25 @@ Son verificaciones formales de resultados publicados, no resultados nuevos sobre
 - **Otras formalizaciones de Collatz en Lean**: no encontré ninguna de la vía de reescritura. Paulson (blog, 30-jul-2026)
   cuenta que una "refutación" de Collatz en Lean (Ramana Kumar, xrchz/CollatzLean) explotaba un bug del kernel.
   Es relevante para la sección de confianza del paper: nuestra cota de ciclos usa `decide +kernel` en volumen.
+
+## Chequeo de novedad para el paper (2026-11-26)
+- **Versión de revista:** J. Autom. Reasoning 67, art. 15 (recibido 3-dic-2021, aceptado 30-dic-2022, publicado
+  25-abr-2023), acceso abierto CC BY 4.0, doi:10.1007/s10817-022-09658-8 (leído del PDF bajado a mano, 26/11). **La frase
+  del §4.2 está igual** (pp. 23–24): "Then repeatedly performing the rightmost possible rewrite results in a rewrite
+  sequence that simulates the F-trajectory." Misma numeración (Lema 3.15, 3.16, Teo. 3.17, Lema 3.18, Teo. 3.19,
+  Teo. 4.2). No menciona CeTA, asistentes de prueba ni chequeo independiente (Sternagel–Thiemann [12] se cita sólo
+  como referencia de interpretaciones árticas). Sin declaración de licencia del código; repo: github.com/emreyolcu/rewriting-collatz.
+- **Alcance honesto del hueco:** la frase se usa para "trayectoria no convergente ⇒ reescritura infinita". Como enunciado
+  general es falsa (ejemplos abajo, todos convergentes), pero sobre trayectorias no convergentes es cierta: trabarse
+  obliga a valor ≤ 7, que converge. Falta un argumento (invariante `Shape` + chequeo finito); **el teorema está bien**.
+  En el paper hay que presentarlo como un hueco menor reparado, no como un error.
+- **TPDB:** `SRS_Standard/Yolcu_21/farkas.xml` (junto con barina, collatz-L, collatz-S, collatz-T-5or7mod8, collatz-T,
+  mahler, michel, silva). Los 11 subsistemas no están. El repo TPDB está archivado (oct. 2025; sigue en TPDB-ARI).
+  **Pendiente:** resultados por problema en la categoría certificada (StarExec / termcomp.github.io no muestran las tablas
+  en una lectura automática). Recordar: CeTA certificaría sólo la terminación, no "terminación ⇒ convergencia".
+- **Licencia:** `emreyolcu/rewriting-collatz` no declara licencia (API de GitHub: `license: null`; último push 7-oct-2023).
+  Nuestros `SubsystemsNat/Arc.lean` y `FarkasCert.lean` derivan de sus certificados (atribución en `NOTICE`): pedir permiso.
+- **Ejemplo concreto del hueco** (`scripts/farkas_check.py`): desde `n = 3` (ternario `10`), la reescritura más a la
+  derecha termina en la forma normal `▷t◁` (valor 3) sin simular la trayectoria 3 → 5 → 8 → 4 → 1. Lo mismo para
+  2, 5, 6, 7, 9, 10, 12, 14, 16, 18, 19, … (formas normales `▷f◁`, `▷t◁`, `▷ft◁`).
+- **Lugar:** ITP 2026 cerró el 19-feb-2026 (abstract 12-feb); ITP 2027 sin fecha (en llamado a sedes). JAR es la alternativa sin fechas.

@@ -925,6 +925,51 @@ que Tao sugiere como posibles alcanzarían.
 La lección es la de siempre, pero ahora con un número: $1/N_0$ es el tamaño de la cuenca de *una sola órbita*. Pedirle
 a un método probabilístico que vea conjuntos tan finos es pedirle que vea órbitas individuales.
 
+## Capítulo 14c. Ronda 10: leer el número en dos bases a la vez
+
+Todas las barreras que encontramos (potenciales locales, autómatas, matrices, ventanas, primeras cifras) tienen algo en
+común: leen el número en **una sola base**. Y Collatz es justamente una pelea entre dos bases: multiplicar por 3 y sumar 1
+es trivial en base 3 (correr las cifras y poner un 1 al final), y dividir por 2 es trivial en base 2. La idea de esta ronda
+fue buscar una "función potencial" que mire las dos escrituras a la vez:
+
+$$\Phi(n) = \log n + (\text{pesos de las ventanas del binario}) + (\text{pesos de las ventanas del ternario}),$$
+
+y que baje en cada paso impar. Si existiera una así, no habría ni órbitas divergentes ni ciclos grandes.
+
+**Lo que dio el experimento** (`scripts/two_base_potential.py`, programación lineal sobre muestras): no existe con
+ventanas de hasta 8 cifras binarias y 5 ternarias. Peor: sin restricciones sobre los pesos, agregar el ternario no mejora
+*nada*; el déficit es idéntico al de usar sólo binario. Con ventanas más grandes el método por muestras ya no decide
+(hay tantas incógnitas como ejemplos y "aprende de memoria").
+
+Una predicción nuestra falló, y conviene contarla: pensamos que el obstáculo era ruido que crece con el tamaño del número.
+Medimos y no: el programa lineal elige pesos cuyo efecto en el medio del número se cancela.
+
+**Por qué las puntas del número no alcanzan.** Hay un hecho lindo: después de $b$ pasos, las últimas $b$ cifras ternarias
+del número dependen sólo de *cuántas veces se dividió por 2 en los últimos $b$ pasos* (lo comprobamos en 20 000 órbitas).
+Las últimas cifras ternarias son memoria del pasado; las últimas binarias, el futuro cercano. Juntas no son más que el
+resto de $n$ módulo $6^k$. Y las primeras cifras en las dos bases sólo dicen cuán grande es $n$. Ninguna función de esos
+datos sirve, por un argumento de dos líneas: si $n = 2^K m - 1$, durante casi $K$ pasos el número imita al ciclo de $-1$,
+su resto módulo $6^k$ queda fijo en $-1$ y, sin embargo, el número crece multiplicándose por $3/2$ en cada paso. Una
+potencial que sólo mira el resto y el tamaño acotado no puede bajar ahí.
+
+**El test exacto.** Faltaban los conteos de ventanas del "medio" del número, que pueden crecer sin límite. En cada base,
+la parte difícil del paso es una máquina de estados finitos (multiplicar por 3 en binario, dividir por 2 en ternario), y
+eso permite decidir la pregunta *para todos los números a la vez*, sin muestras, con programación lineal sobre esas
+máquinas (`scripts/two_base_exact.py`). Antes de creerle, comprobamos que las máquinas calculan bien: comparamos con la
+cuenta directa en miles de números y pesos al azar. (Y el primer control dio un "certificado" falso: era un error
+nuestro, una variable que quedó libre. Por eso se corren controles.)
+
+El resultado es tajante: la mejor potencial posible es la más tonta, *el largo del número en bits*, y en un paso impar
+puede subir un bit entero. Las ventanas, en una base o en dos, no mejoran **nada**. La razón tiene nombre: $-1$ es un
+punto fijo del paso $n \mapsto (3n+1)/2$, y se escribe $\ldots 1111$ en binario y $\ldots 2222$ en ternario. Los números
+$6^K m - 1$ terminan en una tira larga de unos *y* en una tira larga de doses; esas tiras sobreviven paso a paso mientras el
+número crece. Mirado desde las cifras, el número "se queda quieto" en las dos bases a la vez. Es la misma barrera de signo
+de la ronda 8 (los ciclos negativos y sus sombras), que reaparece en las dos escrituras simultáneamente.
+
+**Lección:** cambiar de base no alcanza, porque el enemigo ($-1$ y los otros ciclos negativos) se ve igual de quieto en
+todas las bases que dividen a la dinámica. Lo que una prueba tiene que usar es que los números positivos no pueden
+quedarse cerca de $-1$ para siempre, y eso no es información de cifras: es tamaño.
+
 ## Capítulo 15. Balance honesto
 
 ### Lo que está verificado en Lean (nuestro trabajo)
@@ -969,8 +1014,9 @@ rStation y el resultado de densidad positiva (`docs/prior_art_rstation.md`).
 
 1. $C_3$: medir mejor el ritmo $\sqrt{L}$ y buscar una prueba de que no diverge (o un argumento de que sí).
 2. (Hecho, ronda 9.) Entre Tao y "casi todos llegan a 1" hay una brecha exponencial: de $(\log N_0)^{-c}$ a $1/N_0$.
-3. Leer a fondo rstation y la matemática de M2.
-4. Un artículo sobre la verificación formal (reescritura + hueco + cota 15 601).
+3. (Hecho, ronda 10.) Potenciales que leen en base 2 y 3 a la vez: no mejoran nada (test exacto); el ciclo de $-1$ se ve
+   quieto en las dos bases.
+4. Leer a fondo rstation y la matemática de M2.
 5. `Collatz/Frontier.lean`: un atlas de enunciados abiertos con sus reducciones verificadas.
 
 ---
