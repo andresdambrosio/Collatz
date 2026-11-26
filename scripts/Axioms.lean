@@ -19,6 +19,12 @@ import Collatz
 #print axioms SRS.termIn_without
 #print axioms SRS.Farkas.termF_all
 #print axioms farkas_convergent
+#print axioms collatz_iff_density_one
+#print axioms collatz_iff_upperDensity_one
+#print axioms collatz_iff_logDensity_one
+#print axioms collatz_iff_upperLogDensity_one
+#print axioms M2.predDensity_of_statement
+#print axioms collatz_iff_logDensity_one_of_M2
 #print axioms collatz_conjecture
 -- Librería Forge
 #print axioms Collatz.collatz_of_noCycles_noDivergence

@@ -9,6 +9,7 @@ import Collatz.Rewriting.Neighbors
 import Collatz.CycleBound.Final
 import Collatz.Opfer
 import Collatz.Carries
+import Collatz.Density
 import Collatz.Conway
 import Collatz.KurtzSimon
 import Collatz.Forced.Certs

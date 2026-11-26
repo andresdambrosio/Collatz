@@ -41,6 +41,10 @@ Proyecto Lake (Lean `v4.33.1` + Mathlib) para formalizar la conjetura de Collatz
 - `Collatz/Forced.lean` + `Collatz/Forced/Certs.lean` (**generado** por `python3 scripts/drift_cert.py --lean`):
   clases de residuos forzadas (toda órbita que no llega a 1 pasa por `A` mod `2^m`), certificado entero de deriva y pines
   (versión entera del Teorema A de rStation collatz_32), `Cert.forced` y 24 instancias verificadas con `decide +kernel`.
+- `Collatz/Density.lean`: ronda 9; `collatz_iff_density_one` / `collatz_iff_logDensity_one` (Collatz ⟺ densidad
+  natural / logarítmica 1 de los que llegan a 1; `scripts/tree_density.py` mide densidades de árboles de predecesores),
+  con la densidad positiva de predecesores (M2 de ProofAtlas) como hipótesis explícita `PredDensity`; puente
+  `M2.predDensity_of_statement` desde el enunciado literal de M2 (fidelidad: `scripts/m2_fidelity/`, se corre en un clon de ConjectureA).
 - `Collatz/Carries.lean`: con cualquier regla de acarreo, el paso `n + 2n + 1` es inyectivo sobre las últimas m cifras.
 - `scripts/carry_*.py`: escalera de acarreos `C_k` (ronda 6): `carry_trunc` (mapa), `carry_potential*` (LP de potenciales
   locales), `carry_srs*` (SRS + certificados de largo acotado; `carry_srs_sat.py` usa python-sat/CaDiCaL). Ver `Ideas/acarreos.md`.

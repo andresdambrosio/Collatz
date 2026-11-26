@@ -892,6 +892,39 @@ Esto **no** demuestra Collatz, pero convierte la vieja brecha "casi todos → to
 
 # Parte V. Dónde estamos
 
+## Capítulo 14b. Ronda 9: ¿y si alcanzara con "casi todos"?
+
+En 2019 Terence Tao probó que casi todo número baja muchísimo: para cualquier función $f$ que crece hacia infinito, por
+lenta que sea (por ejemplo $\log\log\log\log N$), casi todo $N$ tiene en su órbita algún valor menor que $f(N)$.
+"Casi todo" quiere decir *densidad logarítmica 1*: si sumamos $1/N$ sobre los $N \le x$ que fallan, eso es una
+fracción cada vez más chica de $\log x$.
+
+¿Por qué no alcanza con eso? Porque "casi todos" deja lugar a excepciones, y la conjetura habla de **todos**. Pero el
+resultado M2 (capítulo 14) cambia el panorama: los predecesores de cualquier $a$ no múltiplo de 3 son una fracción
+positiva de los enteros. Si hubiera un contraejemplo, en su órbita hay un $a$ así (un $3m+1$), y todos sus predecesores
+también serían contraejemplos. Así que los contraejemplos, si existen, son *muchos*. Resultado:
+
+> **Collatz ⟺ casi todo número llega a 1** (en densidad natural o logarítmica), suponiendo M2.
+
+Lo verificamos en Lean (`Collatz/Density.lean`: `collatz_iff_density_one`, `collatz_iff_logDensity_one`). M2 no se
+puede importar (son unas 124 000 líneas en otra versión de Lean), así que copiamos su enunciado letra por letra y
+probamos que alcanza (`M2.predDensity_of_statement`); dentro del proyecto de ProofAtlas comprobamos que su teorema
+prueba exactamente ese enunciado. *No es una idea nuestra*: Lech Mazur la publicó en el blog de Tao en septiembre de
+2026, y la versión con densidad natural ya estaba en Lean en el paquete de ProofAtlas. Lo propio es la versión
+logarítmica, que es la de Tao.
+
+Dicho así, Collatz es "el teorema de Tao con $f$ constante". Tao mismo advierte (Remark 1.4) que esa versión es
+"probablemente casi tan difícil como la conjetura completa". La pregunta útil es **cuánto** falta. Tao prueba algo
+cuantitativo: la proporción de $N$ cuya órbita nunca baja de $N_0$ es a lo sumo $(\log N_0)^{-c}$. Del otro lado, un
+contraejemplo cuyo menor elemento es $m^*$ obliga a que esa proporción sea al menos la densidad de un árbol de
+predecesores de un número cercano a $m^*$. Medimos esas densidades (`scripts/tree_density.py`): para un $a$ típico
+son del orden de $1/a$ (para $a = 10\,007$, unos 9 de cada 10 000 números pasan por $a$). Para llegar a una contradicción
+habría que bajar la cota de Tao de $(\log N_0)^{-c}$ a menos de $1/N_0$: una brecha **exponencial**. Ni las mejoras
+que Tao sugiere como posibles alcanzarían.
+
+La lección es la de siempre, pero ahora con un número: $1/N_0$ es el tamaño de la cuenca de *una sola órbita*. Pedirle
+a un método probabilístico que vea conjuntos tan finos es pedirle que vea órbitas individuales.
+
 ## Capítulo 15. Balance honesto
 
 ### Lo que está verificado en Lean (nuestro trabajo)
@@ -906,6 +939,7 @@ Esto **no** demuestra Collatz, pero convierte la vieja brecha "casi todos → to
 | `not_relSN_d1`, `not_relSN_d0` | en los vecinos 3x − 1 y 3x − 3 no se saca ninguna regla | Filtro propio |
 | `theorem_4_17_iff_collatz` | la prueba de Opfer es circular | Diagnóstico propio |
 | `out_injective_below` | la suma con acarreos truncados es inyectiva | Propio (chico) |
+| `collatz_iff_density_one`, `collatz_iff_logDensity_one` | con M2, Collatz ⇔ casi todo llega a 1 | De Mazur/ProofAtlas (2026, ya en Lean); propia la versión logarítmica y el puente |
 
 `collatz_conjecture` sigue con `sorry`.
 
@@ -934,8 +968,7 @@ rStation y el resultado de densidad positiva (`docs/prior_art_rstation.md`).
 ### Lo que sigue
 
 1. $C_3$: medir mejor el ritmo $\sqrt{L}$ y buscar una prueba de que no diverge (o un argumento de que sí).
-2. Repensar el laboratorio con la nueva equivalencia "Collatz ⇔ densidad de convergentes → 1": ¿qué falta entre
-   Tao y densidad 1?
+2. (Hecho, ronda 9.) Entre Tao y "casi todos llegan a 1" hay una brecha exponencial: de $(\log N_0)^{-c}$ a $1/N_0$.
 3. Leer a fondo rstation y la matemática de M2.
 4. Un artículo sobre la verificación formal (reescritura + hueco + cota 15 601).
 5. `Collatz/Frontier.lean`: un atlas de enunciados abiertos con sus reducciones verificadas.

@@ -115,6 +115,13 @@ Es una mejora del resultado *formal*; la literatura (con verificación a 2⁷¹,
       conjunto fino. Ver `docs/forge/known.md`. Lo que sigue es el muro.
 - [ ] Laboratorio de ideas: funciones potencial, árbol inverso, argumentos 2-ádicos, acarreos en binario
 
+### Contexto — Collatz ⟺ casi todos llegan a 1 (ronda 9, 2026-11-26)
+- [x] `collatz_iff_density_one` / `collatz_iff_upperDensity_one` (`Collatz/Density.lean`), con la densidad positiva de
+      predecesores (M2 de ProofAtlas) como hipótesis explícita `PredDensity`. Reformulación, no avance.
+- [x] Versión con densidad logarítmica (la de Tao): `collatz_iff_logDensity_one`. La natural no es nueva (Mazur, blog de Tao, 6/9/2026; ya en Lean en ProofAtlas).
+- [x] Lectura de Tao: hace falta excepcional `o(1/N₀)`, Tao da `(log N₀)^{-c}`; brecha exponencial (`Ideas/tao_constante.md`).
+- [x] Puente: `M2.predDensity_of_statement` + chequeo de fidelidad dentro de ProofAtlas (`scripts/m2_fidelity/`).
+
 ## Laboratorio de ideas (desde 2026-11-23)
 Cinco rondas documentadas en `Ideas/LAB.md`: minería de literatura, catálogo de Chang (29 paradigmas),
 etiquetado semántico + matrices (`scripts/labelled_*.py`), obstrucción de logaritmo discreto (colapsa en

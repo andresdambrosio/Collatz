@@ -215,3 +215,13 @@ Opciones realistas para el proyecto:
   collatz_32 o el lema de separación de collatz_40. Son resultados nuevos *como verificación*, no avances hacia la prueba.
 - **(b) Exploración de la dirección 2.** Estudiar numéricamente cómo los enteros positivos evitan las sombras de los
   ciclos negativos. Es heurístico y de largo plazo.
+
+## Ronda 9: Tao con f constante (2026-11-26) — cerrada (brecha medida)
+Detalle en `Ideas/tao_constante.md`. Con M2 (densidad positiva de predecesores), Collatz ⟺ casi todo `n` llega a 1:
+la conjetura es el teorema de Tao con `f` constante. Paso 1 verificado en Lean (`Collatz/Density.lean`,
+`collatz_iff_density_one`, `collatz_iff_upperDensity_one`, con M2 como hipótesis explícita `PredDensity`).
+Paso 1b: versión con densidad logarítmica (`collatz_iff_logDensity_one`). La equivalencia ya la publicó Lech Mazur
+(blog de Tao, 6/9/2026); lo nuestro es la verificación formal. Paso 2 (lectura de Tao): un contraejemplo `m*` fuerza
+densidad excepcional `ε(m*) ≥ c_a ≍ 1/m*` (densidad de un árbol de predecesores, medida en `scripts/tree_density.py`),
+y Tao da `ε(N₀) ≪ (log N₀)^{-c}` (pérdida en la Prop. 1.17, decaimiento `n^{-A}` de Fourier de Syracuse).
+**Brecha exponencial**: el muro de "una sola órbita" con número. El filtro 3x−1 no aplica (se corrigió). Cerrada como vía.
