@@ -79,3 +79,4 @@ import Collatz
 #print axioms Collatz.Forced.forced_mod16_11_15
 #print axioms Collatz.Forced.forced_mod32_27_28
 #print axioms Collatz.Forced.forced_mod32_7_25_30
+#print axioms Collatz.Forced.forced_Bc13

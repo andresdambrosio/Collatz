@@ -3,8 +3,8 @@ import Collatz.Forge.Invariants.SyracuseCyclesK12
 /-!
 # Clases de residuos forzadas: certificados de deriva verificados en el kernel
 
-Un conjunto de residuos `A ⊆ ℤ/2^m` es **forzado** si toda órbita de Collatz (mapa clásico
-`collatz`) que no llega a `1` pasa por algún `n` con `n mod 2^m ∈ A`. Yolcu, Aaronson y Heule
+Una clase `A` (unión de condiciones `n ≡ r (mod 2^k)`) es **forzada** si toda órbita de Collatz
+(mapa clásico `collatz`) que no llega a `1` pasa por algún `n` de `A`. Yolcu, Aaronson y Heule
 (2023) probaron varias clases forzadas mod 4 y mod 8 por reescritura. El paper rStation collatz_32
 (fourier_wren, 2026) da un certificado más simple (grafo de residuos más potencial de deriva más
 "pins" de ciclos) y encuentra clases nuevas mod 16 y mod 32.
@@ -27,20 +27,30 @@ namespace Collatz
 
 namespace Forced
 
-/-- Certificado de clase forzada. Las listas se indexan por residuo (`lvl`, `phi`, `pin`) o por
-nivel (`pinLvl`). -/
+/-- Árbol binario para tablas indexadas por residuo: se baja por los bits de `u`, del menos
+significativo al más significativo (búsqueda en `O(g)` pasos, también en el kernel). -/
+inductive BT (α : Type) where
+  | leaf : α → BT α
+  | node : BT α → BT α → BT α
+
+/-- Valor de la tabla en `u`. -/
+def BT.get {α : Type} : BT α → ℕ → α
+  | .leaf v, _ => v
+  | .node l r, u => if u % 2 = 0 then l.get (u / 2) else r.get (u / 2)
+
+/-- Certificado de clase forzada. La clase es la unión de las condiciones `x ≡ r (mod 2^k)`
+para `(k, r) ∈ A`. Las tablas (`lvl`, `pinF`, `phi`, `pin`) se indexan por residuo mod `2^g`. -/
 structure Cert where
-  m : ℕ
   g : ℕ
-  A : List ℕ
+  A : List (ℕ × ℕ)
   a : ℕ
   M : ℕ
   X0 : ℕ
   D : ℕ
-  lvl : List ℕ
-  pinLvl : List Bool
-  phi : List ℕ
-  pin : List ℤ
+  lvl : BT ℕ
+  pinF : BT Bool
+  phi : BT ℕ
+  pin : BT ℤ
 
 namespace Cert
 
@@ -48,28 +58,28 @@ variable (c : Cert)
 
 def N : ℕ := 2 ^ c.g
 
-def isNode (u : ℕ) : Bool := !(c.A.contains (u % 2 ^ c.m))
+def isNode (u : ℕ) : Bool := c.A.all fun p => u % 2 ^ p.1 != p.2
 
 def succs (u : ℕ) : List ℕ :=
   if u % 2 = 1 then [(3 * u + 1) % c.N] else [u / 2, u / 2 + c.N / 2]
 
-def L (u : ℕ) : ℕ := c.lvl.getD u 0
+def L (u : ℕ) : ℕ := c.lvl.get u
 
-def isPin (u : ℕ) : Bool := c.pinLvl.getD (c.L u) false
+def isPin (u : ℕ) : Bool := c.pinF.get u
 
-def Φ (u : ℕ) : ℕ := c.phi.getD u 0
+def Φ (u : ℕ) : ℕ := c.phi.get u
 
-def P (u : ℕ) : ℤ := c.pin.getD u 0
+def P (u : ℕ) : ℤ := c.pin.get u
 
 /-- La arista `u → v` respeta los niveles y, dentro de un nivel, el potencial o el pin. -/
 def edgeOK (u v : ℕ) : Bool :=
   !c.isNode v || (decide (c.L v ≤ c.L u) &&
-    (decide (c.L v < c.L u) ||
+    (decide (c.L v < c.L u) || (decide (c.isPin v = c.isPin u) &&
       (if c.isPin u then
          (if u % 2 = 1 then decide (c.P v = 3 * c.P u + c.D) else decide (2 * c.P v = c.P u))
        else
          (if u % 2 = 1 then decide (c.Φ v + c.a + 1 ≤ c.Φ u)
-          else decide (c.Φ v + 1 ≤ c.Φ u + c.M)))))
+          else decide (c.Φ v + 1 ≤ c.Φ u + c.M))))))
 
 /-- Ningún pin es entero positivo salvo `1, 2, 4`. -/
 def pinOK (u : ℕ) : Bool :=
@@ -78,7 +88,7 @@ def pinOK (u : ℕ) : Bool :=
 
 /-- El chequeo completo (decidible por cómputo). -/
 def check : Bool :=
-  decide (c.m ≤ c.g) && decide (1 ≤ c.g) && decide (1 ≤ c.D) &&
+  (c.A.all fun p => decide (p.1 ≤ c.g)) && decide (1 ≤ c.g) && decide (1 ≤ c.D) &&
   decide ((3 * c.X0 + 1) ^ c.M ≤ 2 ^ c.a * c.X0 ^ c.M) && decide (c.X0 ≤ 600001) &&
   (List.range c.N).all fun u => !c.isNode u || (c.pinOK u && (c.succs u).all (c.edgeOK u))
 
@@ -138,7 +148,7 @@ theorem half_mod {x K : ℕ} (hx : x % 2 = 0) :
 
 /-- **Corrección del certificado.** Si `c.check`, toda órbita que no llega a `1` pasa por `A`. -/
 theorem forced (h : c.check = true) (n : ℕ) (hn : 0 < n) (hnr : ¬ ReachesOne n) :
-    ∃ t, collatz^[t] n % 2 ^ c.m ∈ c.A := by
+    ∃ t, ∃ p ∈ c.A, collatz^[t] n % 2 ^ p.1 = p.2 := by
   simp only [check, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true, List.mem_range] at h
   obtain ⟨⟨⟨⟨⟨hmg, hg⟩, hD⟩, hX⟩, hX6⟩, hall⟩ := h
   by_contra hA
@@ -162,11 +172,13 @@ theorem forced (h : c.check = true) (n : ℕ) (hn : 0 < n) (hnr : ¬ ReachesOne 
     simp only [hrdef]; rw [hN2, Nat.mod_mul_right_mod]
   have hnode : ∀ t, c.isNode (r t) = true := by
     intro t
-    have hm : r t % 2 ^ c.m = x t % 2 ^ c.m := by
+    simp only [isNode, List.all_eq_true, bne_iff_ne, ne_eq]
+    intro p hp
+    have hm : r t % 2 ^ p.1 = x t % 2 ^ p.1 := by
       simp only [hrdef, N]
-      exact Nat.mod_mod_of_dvd _ (Nat.pow_dvd_pow 2 hmg)
-    simp only [isNode, hm, Bool.not_eq_true', List.contains_eq_mem, decide_eq_false_iff_not]
-    exact hA t
+      exact Nat.mod_mod_of_dvd _ (Nat.pow_dvd_pow 2 (hmg p hp))
+    rw [hm]
+    exact hA t p hp
   have hsucc : ∀ t, r (t + 1) ∈ c.succs (r t) := by
     intro t
     have hr1 : r (t + 1) = collatz (x t) % c.N := by simp only [hrdef]; rw [hxs]
@@ -213,7 +225,8 @@ theorem forced (h : c.check = true) (n : ℕ) (hn : 0 < n) (hnr : ¬ ReachesOne 
   have hconst : ∀ j, c.L (r (t0 + j)) = c.L (r t0) := fun j =>
     le_antisymm (hanti j) (hmin _)
   -- en el nivel final, cada paso cumple la relación del nivel
-  have hrel : ∀ j, (if c.isPin (r (t0 + j)) then
+  have hstep : ∀ j, c.isPin (r (t0 + j + 1)) = c.isPin (r (t0 + j)) ∧
+      (if c.isPin (r (t0 + j)) then
          (if r (t0 + j) % 2 = 1 then c.P (r (t0 + j + 1)) = 3 * c.P (r (t0 + j)) + c.D
           else 2 * c.P (r (t0 + j + 1)) = c.P (r (t0 + j)))
        else
@@ -227,10 +240,15 @@ theorem forced (h : c.check = true) (n : ℕ) (hn : 0 < n) (hnr : ¬ ReachesOne 
     have hnlt : ¬ c.L (r (t0 + j + 1)) < c.L (r (t0 + j)) := by omega
     simp only [edgeOK, hnode (t0 + j + 1), Bool.not_true, Bool.false_or, Bool.and_eq_true,
       Bool.or_eq_true, decide_eq_true_eq, hnlt, false_or] at this
-    obtain ⟨-, h2⟩ := this
+    obtain ⟨-, hpe, h2⟩ := this
+    refine ⟨hpe, ?_⟩
     split_ifs at h2 ⊢ <;> simpa using h2
-  have hpinc : ∀ j, c.isPin (r (t0 + j)) = c.isPin (r t0) := fun j => by
-    simp only [isPin, hconst j]
+  have hrel := fun j => (hstep j).2
+  have hpinc : ∀ j, c.isPin (r (t0 + j)) = c.isPin (r t0) := by
+    intro j
+    induction j with
+    | zero => rfl
+    | succ j ih => rw [← add_assoc, (hstep j).1, ih]
   by_cases hp : c.isPin (r t0) = true
   · -- nivel de pin: z = D x − P se anula
     set z : ℕ → ℤ := fun j => (c.D : ℤ) * x (t0 + j) - c.P (r (t0 + j)) with hzdef

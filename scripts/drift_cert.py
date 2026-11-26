@@ -173,13 +173,22 @@ def best(m, A, g):
     return None, None, last
 
 
-def lean_cert(name, m, A, g):
-    """Certificado en sintaxis Lean (para Collatz/Forced/Certs.lean)."""
+
+def bt(vals, fmt):
+    """Árbol `BT` de Lean: se baja por los bits de u (LSB primero); subárboles constantes = hoja."""
+    if all(v == vals[0] for v in vals):
+        return f'.leaf {fmt(vals[0])}'
+    return f'.node ({bt(vals[0::2], fmt)}) ({bt(vals[1::2], fmt)})'
+
+
+def lean_cert(name, pairs, g):
+    """Certificado en sintaxis Lean. `pairs`: la clase, como lista de (k, r) con x ≡ r (mod 2^k)."""
     from math import lcm
-    aM, c, msg = best(m, A, g)
+    N = 1 << g
+    A = {u for u in range(N) if any(u % (1 << k) == r for k, r in pairs)}
+    aM, c, msg = best(g, A, g)
     assert c is not None, msg
     a, M = aM
-    N = 1 << g
     phi_min = min(c['Phi'].values(), default=0)
     phi = [c['Phi'].get(u, phi_min) - phi_min for u in range(N)]
     D = 1
@@ -187,21 +196,32 @@ def lean_cert(name, m, A, g):
         D = lcm(D, p.denominator)
     P = [int(c['pin'][u] * D) if u in c['pin'] else 0 for u in range(N)]
     lvl = [c['lvl'].get(u, 0) for u in range(N)]
-    pinLvl = ['true' if c['kinds'][i] == 'pin' else 'false' for i in range(c['levels'])]
-    js = lambda xs: '[' + ', '.join(map(str, xs)) + ']'
-    return (f'def {name} : Cert where\n  m := {m}\n  g := {g}\n  A := {js(sorted(A))}\n  a := {a}\n  M := {M}\n'
-            f'  X0 := {c["X0"]}\n  D := {D}\n  lvl := {js(lvl)}\n  pinLvl := {js(pinLvl)}\n'
-            f'  phi := {js(phi)}\n  pin := {js(P)}\n')
+    pinF = [c['kinds'][c['lvl'][u]] == 'pin' if u in c['lvl'] else False for u in range(N)]
+    js = lambda xs: '[' + ', '.join(f'({k}, {r})' for k, r in xs) + ']'
+    ints = lambda v: f'({v})' if v < 0 else str(v)
+    return (f'set_option maxRecDepth 100000 in\ndef {name} : Cert where\n  g := {g}\n  A := {js(pairs)}\n  a := {a}\n  M := {M}\n'
+            f'  X0 := {c["X0"]}\n  D := {D}\n'
+            f'  lvl := {bt(lvl, str)}\n  pinF := {bt(pinF, lambda b: "true" if b else "false")}\n'
+            f'  phi := {bt(phi, str)}\n  pin := {bt(P, ints)}\n'), (a, M, c)
 
 
-CASES = [  # (m, A, etiqueta)
-    (2, [0], 'YAH'), (2, [1], 'YAH'), (2, [2], 'YAH'), (2, [3], 'YAH'),
-    (3, [2], 'YAH'), (3, [3], 'YAH'), (3, [4], 'YAH'), (3, [6], 'YAH'), (3, [1, 5], 'YAH'), (3, [1, 7], 'YAH'),
-    (4, [6], 'c32'), (4, [12], 'c32'),
-    (4, [9, 15], 'c32b'), (4, [11, 15], 'c32b'), (5, [27, 28], 'c32b'),
-    (5, [1, 27, 30], 'c32b'), (5, [7, 25, 30], 'c32b'), (5, [7, 27, 30], 'c32b'), (5, [9, 27, 30], 'c32b'),
-    (5, [18, 19, 31], 'c32b'), (5, [18, 23, 31], 'c32b'), (5, [18, 29, 31], 'c32b'), (5, [19, 22, 31], 'c32b'),
-    (5, [22, 29, 31], 'c32b'),
+def bc_pairs(g):
+    """Bc_g de collatz_32: 7 mod 8 o los residuos del ciclo de −5 módulo 2^g."""
+    N = 1 << g
+    return [(3, 7)] + [(g, (-x) % N) for x in (5, 14, 7, 20, 10)]
+
+
+CASES = [  # (nombre, pares, g, etiqueta)
+    *[(f'mod4_{r}', [(2, r)], 2, 'YAH') for r in range(4)],
+    *[(f'mod8_{"_".join(map(str, R))}', [(3, x) for x in R], 3, 'YAH')
+      for R in ([2], [3], [4], [6], [1, 5], [1, 7])],
+    ('mod16_6', [(4, 6)], 4, 'c32'), ('mod16_12', [(4, 12)], 4, 'c32'),
+    ('mod16_9_15', [(4, 9), (4, 15)], 6, 'c32b'), ('mod16_11_15', [(4, 11), (4, 15)], 6, 'c32b'),
+    ('mod32_27_28', [(5, 27), (5, 28)], 6, 'c32b'),
+    *[(f'mod32_{"_".join(map(str, R))}', [(5, x) for x in R], 5, 'c32b')
+      for R in ([1, 27, 30], [7, 25, 30], [7, 27, 30], [9, 27, 30], [18, 19, 31], [18, 23, 31],
+                [18, 29, 31], [19, 22, 31], [22, 29, 31])],
+    ('Bc13', bc_pairs(13), 13, 'c32bc'),
 ]
 
 HEADER = """import Collatz.Forced
@@ -212,8 +232,10 @@ HEADER = """import Collatz.Forced
 Cada teorema dice: toda órbita de Collatz que no llega a `1` pasa por la clase indicada.
 * `YAH`: clases probadas por Yolcu, Aaronson y Heule (2023), re-verificadas aquí con otro método.
 * `{6}`, `{12}` mod 16: rStation collatz_32 (derivables de YAH).
-* resto: la "base" de clases que collatz_32 reporta como no derivables de YAH por su test de clausura
-  (fourier_wren, rStation, 2026; no arbitrado). Acá quedan verificadas en el kernel.
+* `c32b`: la "base" de clases que collatz_32 reporta como no derivables de YAH por su test de clausura
+  (fourier_wren, rStation, 2026; no arbitrado).
+* `Bc13`: 7 mod 8 o un residuo del ciclo de −5 módulo 2^13 (collatz_32, Teorema F). Con `g ≥ 14` esta
+  familia ya no tiene certificado (lo prueba el mismo paper; nuestro certificador también falla).
 -/
 
 namespace Collatz
@@ -224,25 +246,39 @@ open Cert
 """
 
 
+def statement(pairs):
+    mods = sorted({k for k, _ in pairs})
+    parts = []
+    for k in mods:
+        rs = [r for kk, r in pairs if kk == k]
+        if len(rs) == 1:
+            parts.append(f'collatz^[t] n % {2 ** k} = {rs[0]}')
+        else:
+            parts.append(f'collatz^[t] n % {2 ** k} ∈ ({rs} : List ℕ)')
+    return ' ∨ '.join(parts)
+
+
 def gen_lean(path):
     out = [HEADER]
-    for m, A, tag in CASES:
-        for g in range(m, m + 4):
-            aM, c, msg = best(m, set(A), g)
-            if c:
-                break
-        else:
-            raise SystemExit(f'sin certificado {m} {A}')
-        nm = 'mod%d_%s' % (2 ** m, '_'.join(map(str, A)))
-        out.append(lean_cert('cert_' + nm, m, set(A), g))
-        out.append(f"""/-- Toda órbita que no llega a `1` pasa por {A} mod {2 ** m} ({tag}). -/
+    for nm, pairs, g, tag in CASES:
+        txt, (a, M, c) = lean_cert('cert_' + nm, pairs, g)
+        out.append(txt)
+        alts = ' | '.join(['rfl'] * len(pairs))
+        js = '[' + ', '.join(f'({k}, {r})' for k, r in pairs) + ']'
+        out.append(f"""set_option maxRecDepth 100000 in
+set_option maxHeartbeats 0 in
+/-- Toda órbita que no llega a `1` pasa por la clase ({tag}). -/
 theorem forced_{nm} (n : ℕ) (hn : 0 < n) (h : ¬ ReachesOne n) :
-    ∃ t, collatz^[t] n % {2 ** m} ∈ ({A} : List ℕ) :=
-  (cert_{nm}).forced (by decide +kernel) n hn h
+    ∃ t, {statement(pairs)} := by
+  obtain ⟨t, p, hp, hx⟩ := (cert_{nm}).forced (by decide +kernel) n hn h
+  refine ⟨t, ?_⟩
+  have hA : (cert_{nm}).A = {js} := rfl
+  rw [hA] at hp
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+  rcases hp with {alts} <;> simp at hx <;> simp [hx]
 """)
     out.append('end Forced\n\nend Collatz\n')
     open(path, 'w').write('\n'.join(out))
-
 
 if __name__ == '__main__':
     if sys.argv[1] == '--lean':

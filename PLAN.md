@@ -107,7 +107,8 @@ Es una mejora del resultado *formal*; la literatura (con verificación a 2⁷¹,
       para "toda órbita que no llega a 1 pasa por `A` mod `2^m`". Versión entera del Teorema A de rStation collatz_32.
 - [x] 24 clases verificadas en el kernel (`Collatz/Forced/Certs.lean`): las 10 de YAH mod 4/8, `{6}`, `{12}` mod 16 y la
       "base" nueva de collatz_32 (`{9,15}`, `{11,15}` mod 16, `{27,28}` mod 32, nueve ternas mod 32).
-- [ ] Opcional: la familia `Bc_13` de collatz_32 (g = 13, 8192 nodos; ver si el kernel la aguanta).
+- [x] `Bc_13` de collatz_32 (`forced_Bc13`): 7 mod 8 o las sombras del ciclo de −5 mod 2^13 (7163 nodos; tablas en
+      árboles binarios, ~2 min en el kernel). Con g = 14 no hay certificado (como predice el paper).
 
 ### Fase 5 — Frente divergencia (`no_divergent_orbits`)
 - [x] Retrato de un contraejemplo (Forge): → ∞, densidad de impares ≤ log₂3, aperiódico,

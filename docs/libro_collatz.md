@@ -426,6 +426,14 @@ Un paper de rStation (collatz_32, 2026) da un certificado más simple que la ree
   - nueve ternas módulo 32, como {7, 25, 30}.
 
   Por ejemplo: *toda órbita que no llega a 1 pasa por un número que deja resto 9 o 15 al dividirlo por 16*.
+- **[Lean]** El más fuerte de la familia es `Collatz.Forced.forced_Bc13`: *toda órbita que no llega a 1 pasa
+  por un número $\equiv 7 \pmod 8$ o por uno que coincide módulo $2^{13}$ con un punto del ciclo negativo
+  $-5 \to -14 \to -7 \to -20 \to -10 \to -5$*.
+  - Es lo más cerca que llega el método a la clase abierta {7}: lo que hay que agregar a "7 mod 8" son justo las
+    sombras del ciclo de $-5$.
+  - Con módulo $2^{14}$ esa clase ya no tiene certificado; collatz_32 lo prueba y nuestro certificador lo confirma.
+  - El grafo tiene 7163 nodos. Para que el kernel lo chequee, las tablas del certificado son árboles binarios
+    indexados por los bits del residuo. Compila en unos dos minutos.
 - **[Literatura]** Esas clases las encontró collatz_32 (no arbitrado). Lo nuestro es la verificación formal. Las
   cuatro clases abiertas siguen abiertas: el mismo paper prueba que estos certificados no pueden con ellas, en
   ninguna resolución, por la "barrera de signo" de los ciclos negativos
