@@ -11,6 +11,7 @@ build-dir = "../html/es"
 after = ["links"]
 
 [output.html]
+site-url = "/Collatz/libro/"
 default-theme = "light"
 preferred-dark-theme = "coal"
 git-repository-url = "https://github.com/andresdambrosio/Collatz"

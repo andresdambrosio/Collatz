@@ -3,7 +3,7 @@ name: Blog (GitHub Pages)
 on:
   push:
     branches: [main]
-    paths: ["site/**", ".github/workflows/pages.yml"]
+    paths: ["site/**", "book/**", ".github/workflows/pages.yml"]
   workflow_dispatch:
 
 permissions:
@@ -25,6 +25,17 @@ jobs:
         with:
           source: ./site
           destination: ./_site
+      - name: Install mdBook
+        run: |
+          curl -sSfL https://github.com/rust-lang/mdBook/releases/download/v0.5.4/mdbook-v0.5.4-x86_64-unknown-linux-gnu.tar.gz | tar -xz -C /usr/local/bin
+      - name: Install mdbook-katex
+        run: cargo install mdbook-katex --version 0.10.0 --locked
+      # The course book (Spanish) is served under /libro/, next to the blog.
+      - name: Build book
+        run: |
+          mdbook build book/es
+          sudo mkdir -p _site/libro
+          sudo cp -r book/html/es/. _site/libro/
       - uses: actions/upload-pages-artifact@v3
   deploy:
     needs: build
