@@ -1,0 +1,17 @@
+[book]
+title = "Collatz en Lean"
+authors = ["Andrés D'Ambrosio"]
+language = "es"
+src = "."
+
+[build]
+build-dir = "../html/es"
+
+[preprocessor.katex]
+after = ["links"]
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "coal"
+git-repository-url = "https://github.com/andresdambrosio/Collatz"
+edit-url-template = "https://github.com/andresdambrosio/Collatz/edit/main/book/es/{path}"

@@ -54,6 +54,7 @@ Proyecto Lake (Lean `v4.33.1` + Mathlib) para formalizar la conjetura de Collatz
   scripts `scripts/nl_*.py`, `hol_*.py`, `ind_*.py`, `fam_*.py`.
 - `Ideas/LAB.md`: laboratorio de ideas hacia la prueba completa (protocolo, rondas, síntesis).
 - `docs/prior_art_rewriting.md`: prior art de la Fase 4 (Nashida 2026: barreras en Lean).
+- `book/es/`: curso didáctico (mdBook, como el de IndivisibleStochasticMechanics): `mdbook build book/es` → `book/html/es/` (ignorado). Por ahora sólo ES y sin deploy.
 - `docs/libro_collatz.md`: el recorrido completo del proyecto, en castellano, didáctico y autocontenido (mantenerlo al día).
 - `scripts/run_cubes.sh`: búsqueda SAT partida en casos (cube and conquer) con guardián de memoria; salida en `.sat_runs/` (ignorada).
 - `scripts/certs.py`: parser/chequeo de certificados de YAH; `scripts/srs.py`, `scripts/farkas_check.py`: chequeos numéricos.

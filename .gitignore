@@ -6,3 +6,4 @@ __pycache__/
 # Papers con copyright: sólo para lectura local, no se publican
 docs/applegateI.pdf
 .sat_runs/
+book/html/
